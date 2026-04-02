@@ -217,7 +217,7 @@
         <span><span class="param-name">β</span> <span class="param-full">runway</span></span>
         <span class="param-val" id="val-beta">0.90</span>
       </label>
-      <input type="range" id="sl-beta" min="0.50" max="0.99" step="0.01" value="0.90" oninput="update()">
+      <input type="range" id="sl-beta" min="0.50" max="0.99" step="0.01" value="0.90" oninput="updateDisplay()" onchange="update()">
       <div class="hint">More runway → pickier</div>
     </div>
     <div class="control-group">
@@ -225,7 +225,7 @@
         <span><span class="param-name">c</span> <span class="param-full">benefits</span></span>
         <span class="param-val" id="val-c">20</span>
       </label>
-      <input type="range" id="sl-c" min="1" max="45" step="1" value="20" oninput="update()">
+      <input type="range" id="sl-c" min="1" max="45" step="1" value="20" oninput="updateDisplay()" onchange="update()">
       <div class="hint">Higher benefits → higher outside option</div>
     </div>
     <div class="control-group">
@@ -233,7 +233,7 @@
         <span><span class="param-name">α</span> <span class="param-full">separation</span></span>
         <span class="param-val" id="val-alpha">0.10</span>
       </label>
-      <input type="range" id="sl-alpha" min="0.00" max="0.50" step="0.01" value="0.10" oninput="update()">
+      <input type="range" id="sl-alpha" min="0.00" max="0.50" step="0.01" value="0.10" oninput="updateDisplay()" onchange="update()">
       <div class="hint">More insecurity → lower w*</div>
     </div>
   </div>
@@ -298,11 +298,11 @@ function buildGrid(){
   for(let i=0;i<60;i++)q[i]/=s;
   return{w,q};
 }
-function solve(beta,c,alpha,tol=1e-8){
+function solve(beta,c,alpha,tol=1e-6){
   const{w,q}=buildGrid();
   const denom=1-beta*(1-alpha),uc=uLog(c);
   let d=0;for(let i=0;i<60;i++)d+=uLog(w[i])/(1-beta)*q[i];
-  for(let k=0;k<5000;k++){
+  for(let k=0;k<500;k++){
     let dn=0;
     for(let i=0;i<60;i++){const vi=(uLog(w[i])+beta*alpha*d)/denom;dn+=Math.max(vi,uc+beta*d)*q[i];}
     if(Math.abs(dn-d)<tol){d=dn;break;}d=dn;
@@ -678,21 +678,27 @@ function updateNarr(beta,c,alpha,wStar,meanDur){
 }
 
 let dbnc=null;
-function update(){
+function updateDisplay(){
   const beta=parseFloat(document.getElementById('sl-beta').value);
   const c=parseFloat(document.getElementById('sl-c').value);
   const alpha=parseFloat(document.getElementById('sl-alpha').value);
   document.getElementById('val-beta').textContent=beta.toFixed(2);
   document.getElementById('val-c').textContent=c.toFixed(0);
   document.getElementById('val-alpha').textContent=alpha.toFixed(2);
+}
+function update(){
+  updateDisplay();
   clearTimeout(dbnc);
   dbnc=setTimeout(()=>{
+    const beta=parseFloat(document.getElementById('sl-beta').value);
+    const c=parseFloat(document.getElementById('sl-c').value);
+    const alpha=parseFloat(document.getElementById('sl-alpha').value);
     const res=solve(beta,c,alpha);
     document.getElementById('out-wstar').textContent=res.wStar.toFixed(2);
     document.getElementById('out-dur').textContent=res.meanDur.toFixed(1)+' wk';
     renderVF(res);renderDist(res);
     updateNarr(beta,c,alpha,res.wStar,res.meanDur);
-  },40);
+  },500);
 }
 window.addEventListener('resize',update);
 update();
