@@ -38,6 +38,9 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--muted); text-decoration: none; transition: color 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  align-self: stretch; padding: 0 20px;
+  border-right: 1px solid var(--rule);
 }
 .game-nav-home:hover { color: var(--gold); }
 .game-nav-links {
