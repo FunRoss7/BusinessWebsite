@@ -33,7 +33,9 @@
 <div class="act" id="act1">
   <div class="act-label">Act I · The Search</div>
   <h2>You're unemployed.<br>Offers arrive <em>randomly.</em></h2>
-  <p>Each week, one wage offer appears. <strong>Accept</strong> and earn that wage forever. <strong>Reject</strong> and collect <strong>$10</strong> in benefits while you wait. Wages are drawn from a distribution centered at $50. You never know what's coming next.</p>
+  <p>Each week, one wage offer appears. <strong>Accept</strong> and you earn that wage for the rest of your career. <strong>Reject</strong> and collect <strong>$10</strong> in unemployment benefits while you wait for the next one.</p>
+  <p>Offers follow a realistic salary distribution — <strong>about <span id="dist-pct"></span>% will fall somewhere between $<span id="dist-low"></span> and $<span id="dist-high"></span>.</strong> A few will be much lower. A few will be much higher. You won't know which until it arrives.</p>
+  <p>Your goal: <strong>maximize your lifetime income.</strong> The catch — you must decide on each offer before seeing the next one.</p>
 
   <div class="card" id="search-card">
     <div class="offer-display">
@@ -266,24 +268,48 @@
   </div>
 
   <div style="margin-top:48px;padding-top:28px;border-top:1px solid var(--rule);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.8">
-    Model: McCall (1970) with job separation · Wages ~ N(50,10) on [0,100] · 60-point grid<br>
+    Model: McCall (1970) with job separation · Wages ~ N(WAGE_MU, WAGE_SIGMA) on [0,100] · 60-point grid<br>
     Fixed-point iteration on scalar continuation value · Reservation wage via linear interpolation
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════
+// DISTRIBUTION PARAMETERS
+// ═══════════════════════════════════════
+const WAGE_LOW = 40;   // lower bound of quoted range
+const WAGE_HIGH= 60;   // upper bound of quoted range
+const WAGE_MU  = (WAGE_LOW + WAGE_HIGH) / 2; // center of wage distribution
+const WAGE_PCT = 0.80; // fraction of offers falling in [WAGE_LOW, WAGE_HIGH]
+
+// Compute sigma so that exactly WAGE_PCT of draws fall in [WAGE_LOW, WAGE_HIGH].
+// Requires WAGE_MU to be the midpoint of [WAGE_LOW, WAGE_HIGH].
+function stdNormCdf(x){
+  const z=x/Math.SQRT2;
+  const t=1/(1+0.3275911*Math.abs(z));
+  const p=t*(0.254829592+t*(-0.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));
+  const e=1-p*Math.exp(-z*z);
+  return 0.5*(1+(z>=0?e:-e));
+}
+function probit(p){
+  let lo=-10,hi=10,mid=0;
+  for(let i=0;i<60;i++){mid=(lo+hi)/2;stdNormCdf(mid)<p?lo=mid:hi=mid;}
+  return mid;
+}
+const WAGE_SIGMA = (WAGE_HIGH - WAGE_MU) / probit((1 + WAGE_PCT) / 2);
+
+// ═══════════════════════════════════════
 // MATH ENGINE
 // ═══════════════════════════════════════
-function normRandom(mu=50,sigma=10){
+function normRandom(mu=WAGE_MU,sigma=WAGE_SIGMA){
   let u=0,v=0;
   while(!u)u=Math.random();while(!v)v=Math.random();
   return mu+sigma*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
 }
-function normPdf(x,mu=50,sigma=10){
+function normPdf(x,mu=WAGE_MU,sigma=WAGE_SIGMA){
   return Math.exp(-0.5*((x-mu)/sigma)**2)/(sigma*Math.sqrt(2*Math.PI));
 }
-function normCdf(x,mu=50,sigma=10){
+function normCdf(x,mu=WAGE_MU,sigma=WAGE_SIGMA){
   const z=(x-mu)/(sigma*Math.SQRT2);
   const t=1/(1+0.3275911*Math.abs(z));
   const p=t*(0.254829592+t*(-0.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));
@@ -322,7 +348,7 @@ function solve(beta,c,alpha,tol=1e-6){
 const BETA_A1=0.9,C_A1=10;
 let s1={week:0,offers:[],benefitsTotal:0,currentOffer:null};
 
-function drawW(){return Math.max(0.1,Math.round(normRandom(50,10)*10)/10);}
+function drawW(){return Math.max(0.1,Math.round(normRandom(WAGE_MU,WAGE_SIGMA)*10)/10);}
 
 function nextOffer(){
   s1.week++;s1.currentOffer=drawW();
@@ -702,6 +728,11 @@ function update(){
 }
 window.addEventListener('resize',update);
 update();
+
+// Populate distribution range display from constants
+document.getElementById('dist-pct').textContent = Math.round(WAGE_PCT * 100);
+document.getElementById('dist-low').textContent = WAGE_LOW;
+document.getElementById('dist-high').textContent = WAGE_HIGH;
 </script>
 </body>
 </html>
