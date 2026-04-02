@@ -128,6 +128,30 @@ p em { color: var(--gold); font-style: italic; }
 
 /* ACT 1 */
 .offer-display { text-align: center; padding: 24px 0 16px; }
+
+.choice-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+.choice-card {
+  border: 1px solid var(--rule); border-radius: 8px; padding: 24px 16px;
+  cursor: pointer; background: transparent; width: 100%; text-align: center;
+  transition: border-color 0.18s, background 0.18s; font-family: inherit;
+}
+.choice-card:disabled { opacity: 0.3; cursor: default; }
+.choice-card-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+}
+.choice-card-num {
+  font-family: 'Lora', serif; font-size: 44px; font-weight: 600;
+  line-height: 1; margin-bottom: 10px;
+}
+.choice-card-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+
+.reject-card:not(:disabled):hover { border-color: var(--red); background: rgba(196,75,58,0.04); }
+.reject-card .choice-card-num { color: var(--muted); }
+
+.accept-card .choice-card-num { color: var(--gold); }
+.accept-card:not(:disabled):hover { border-color: var(--green); background: rgba(90,158,111,0.04); }
+.accept-card:not(:disabled):hover .choice-card-num { color: var(--green); }
 .offer-week {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;

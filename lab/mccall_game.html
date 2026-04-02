@@ -37,20 +37,43 @@
   <p>Offers follow a realistic salary distribution — <strong>about <span id="dist-pct"></span>% will fall somewhere between $<span id="dist-low"></span> and $<span id="dist-high"></span>.</strong> A few will be much lower. A few will be much higher. You won't know which until it arrives.</p>
   <p>Your goal: <strong>maximize your lifetime income.</strong> The catch — you must decide on each offer before seeing the next one.</p>
 
-  <div class="card" id="search-card">
-    <div class="offer-display">
-      <div class="offer-week" id="offer-week">Week 1</div>
-      <div class="offer-number" id="offer-number">—</div>
-      <div class="offer-sub">this week's wage offer</div>
+  <!-- Tutorial card -->
+  <div class="card" id="tutorial-card">
+    <div class="act-label" id="tut-step-label">Tutorial · Step 1 of 3</div>
+    <div class="choice-cards">
+      <button class="choice-card reject-card" id="tut-btn-reject" onclick="tutReject()">
+        <div class="choice-card-label">Reject</div>
+        <div class="choice-card-num" id="tut-reject-num">$10</div>
+        <div class="choice-card-desc">this week, in benefits<br>then keep searching</div>
+      </button>
+      <button class="choice-card accept-card" id="tut-btn-accept" onclick="tutAccept()">
+        <div class="choice-card-label">Accept</div>
+        <div class="choice-card-num" id="tut-accept-num">$11.0</div>
+        <div class="choice-card-desc">every week<br>for the rest of your career</div>
+      </button>
+    </div>
+    <div class="reveal-narrative" id="tut-narrative" style="display:none;margin-top:16px"></div>
+  </div>
+
+  <!-- Real game card -->
+  <div class="card" id="search-card" style="display:none">
+    <div class="offer-week" id="offer-week" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Week 1</div>
+    <div class="choice-cards">
+      <button class="choice-card reject-card" id="btn-reject" onclick="rejectOffer()">
+        <div class="choice-card-label">Reject</div>
+        <div class="choice-card-num" id="reject-num">$10</div>
+        <div class="choice-card-desc">this week, in benefits<br>then keep searching</div>
+      </button>
+      <button class="choice-card accept-card" id="btn-accept" onclick="acceptOffer()">
+        <div class="choice-card-label">Accept</div>
+        <div class="choice-card-num" id="offer-number">—</div>
+        <div class="choice-card-desc">every week<br>for the rest of your career</div>
+      </button>
     </div>
     <div class="benefits-row">
       <div class="bstat">Benefits collected: <span id="benefits-total">$0</span></div>
       <div class="bstat">Weeks: <span id="weeks-count">0</span></div>
       <div class="bstat">Best seen: <span id="best-seen">—</span></div>
-    </div>
-    <div class="decision-btns">
-      <button class="btn btn-reject" id="btn-reject" onclick="rejectOffer()">Reject — keep searching</button>
-      <button class="btn btn-accept" id="btn-accept" onclick="acceptOffer()">Accept this offer</button>
     </div>
   </div>
 
@@ -346,6 +369,118 @@ function solve(beta,c,alpha,tol=1e-6){
 // ACT 1
 // ═══════════════════════════════════════
 const BETA_A1=0.9,C_A1=10;
+
+// ── Tutorial ──────────────────────────────
+const TUT_OFFER_LOW    = 11;   // forced-decline offer
+const TUT_OFFER_ACCEPT = 65;   // forced-accept offer
+const TUT_OFFER_NEXT   = 70;   // counterfactual reveal offer
+const TUT_ACCEPT_PCT   = Math.round(normCdf(TUT_OFFER_ACCEPT) * 100);
+
+const TUT_STEPS=[
+  {
+    offer:TUT_OFFER_LOW,force:'reject',
+    narrative:`<strong>Good call.</strong> $${TUT_OFFER_LOW} is barely above your $${C_A1} unemployment benefit. In expectation, a better offer is almost guaranteed to arrive soon — waiting costs you almost nothing here.`,
+    cta:'See the next offer →'
+  },
+  {
+    offer:TUT_OFFER_ACCEPT,force:'accept',
+    narrative:`<strong>Exactly right.</strong> $${TUT_OFFER_ACCEPT} beats ${TUT_ACCEPT_PCT}% of all offers you'll ever see. The expected gain from holding out for more is tiny — and every week you wait, you only collect $${C_A1} in benefits.`,
+    cta:'See what happened next →'
+  },
+  {
+    offer:TUT_OFFER_NEXT,force:null,
+    narrative:`The very next offer was <strong>$${TUT_OFFER_NEXT}</strong> — $${TUT_OFFER_NEXT-TUT_OFFER_ACCEPT} more than what you accepted. But to get there, you would have turned down $${TUT_OFFER_ACCEPT} and collected just $${C_A1} in unemployment for another week.<br><br>Was the extra $${TUT_OFFER_NEXT-TUT_OFFER_ACCEPT} worth the wait? Only if you had known it was coming. <em>That's the whole problem.</em>`
+  }
+];
+let tutPhase=0;
+
+function showTutPhase(i){
+  const step=TUT_STEPS[i];
+  document.getElementById('tut-step-label').textContent=`Tutorial · Step ${i+1} of ${TUT_STEPS.length}`;
+  const acceptEl=document.getElementById('tut-accept-num');
+  acceptEl.textContent=`$${step.offer.toFixed(1)}`;
+  acceptEl.classList.remove('pop');void acceptEl.offsetWidth;acceptEl.classList.add('pop');
+  document.getElementById('tut-reject-num').textContent=`$${C_A1}`;
+  document.getElementById('tut-btn-reject').disabled=(step.force==='accept'||step.force===null);
+  document.getElementById('tut-btn-accept').disabled=(step.force==='reject'||step.force===null);
+  const narr=document.getElementById('tut-narrative');
+  narr.style.display='none';narr.innerHTML='';
+  if(step.force===null){
+    const tutSeq=[TUT_OFFER_LOW, TUT_OFFER_ACCEPT, TUT_OFFER_NEXT];
+    const nP=tutSeq.length;
+    const userIdx=1; // TUT_OFFER_ACCEPT is at index 1
+
+    // Build rows first so we can find best total
+    const tutRows=tutSeq.map((offer,i)=>{
+      const periods=Array.from({length:nP},(_,j)=>j<i?C_A1:offer);
+      const total=periods.reduce((a,b)=>a+b,0);
+      return{offer,i,periods,total};
+    });
+    const bestTotal=Math.max(...tutRows.map(r=>r.total));
+    let agentN=1;
+
+    let header=`<tr><th class="row-label">Offer</th><th class="row-label">Taken by</th>`;
+    for(let p=1;p<=nP;p++) header+=`<th>Period ${p}</th>`;
+    header+=`<th>Total</th></tr>`;
+
+    let bodyHTML='';
+    tutRows.forEach(({offer,i,periods,total})=>{
+      const isUser=(i===userIdx);
+      const isBestTotal=(total===bestTotal);
+      const both=(isUser&&isBestTotal);
+      const takenBy=isUser?'▶ You':`Agent ${agentN++}`;
+
+      // Row highlight: green for best total, gold for user; if both, green row + gold 'you' cell
+      const rowBg=isUser&&!both?'background:rgba(212,168,67,0.07)':isBestTotal?'background:rgba(90,158,111,0.07)':'';
+      const youCellBg=both?'background:rgba(212,168,67,0.25);':'';
+
+      bodyHTML+=`<tr style="${rowBg}">`;
+      bodyHTML+=`<td class="row-label" style="color:var(--muted)">$${offer.toFixed(1)}</td>`;
+      bodyHTML+=`<td class="row-label" style="${youCellBg}color:${isUser?'var(--gold)':'var(--muted)'}">${takenBy}</td>`;
+      periods.forEach((inc,j)=>{
+        const earned=(j>=i);
+        bodyHTML+=`<td style="color:${earned?'var(--blue)':'var(--muted)'}">$${inc.toFixed(0)}</td>`;
+      });
+      bodyHTML+=`<td style="color:var(--ink);font-weight:500">$${total.toFixed(0)}</td>`;
+      bodyHTML+=`</tr>`;
+    });
+
+    const tableHTML=`
+      <div class="table-wrap" style="margin-top:20px">
+        <table>${header}${bodyHTML}</table>
+      </div>
+      <div class="table-legend" style="margin-top:8px">
+        <div class="tleg"><div class="tleg-sw" style="background:rgba(212,168,67,0.25)"></div>Your row</div>
+        <div class="tleg"><div class="tleg-sw" style="background:rgba(90,158,111,0.25)"></div>Best total income</div>
+        <div class="tleg"><div class="tleg-sw" style="background:#4a8fa8"></div>Employed income</div>
+        <div class="tleg"><div class="tleg-sw" style="background:#7a7060"></div>Unemployment benefit</div>
+      </div>`;
+    narr.innerHTML=step.narrative+tableHTML+`<br><br><button class="eq-next-btn" onclick="startRealGame()">Start the real game →</button>`;
+    narr.style.display='block';
+  }
+}
+function tutReject(){
+  const step=TUT_STEPS[tutPhase];if(step.force!=='reject')return;
+  document.getElementById('tut-btn-reject').disabled=true;
+  const narr=document.getElementById('tut-narrative');
+  narr.innerHTML=step.narrative+`<br><br><button class="eq-next-btn" onclick="advanceTut()">See the next offer →</button>`;
+  narr.style.display='block';
+}
+function tutAccept(){
+  const step=TUT_STEPS[tutPhase];if(step.force!=='accept')return;
+  document.getElementById('tut-btn-accept').disabled=true;
+  const narr=document.getElementById('tut-narrative');
+  narr.innerHTML=step.narrative+`<br><br><button class="eq-next-btn" onclick="advanceTut()">See what offers came after you accepted →</button>`;
+  narr.style.display='block';
+}
+function advanceTut(){tutPhase++;showTutPhase(tutPhase);}
+function startRealGame(){
+  document.getElementById('tutorial-card').style.display='none';
+  document.getElementById('search-card').style.display='block';
+  document.getElementById('reject-num').textContent=`$${C_A1}`;
+  nextOffer();
+}
+
 let s1={week:0,offers:[],benefitsTotal:0,currentOffer:null};
 
 function drawW(){return Math.max(0.1,Math.round(normRandom(WAGE_MU,WAGE_SIGMA)*10)/10);}
@@ -464,7 +599,7 @@ function buildReveal(){
   rev.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-nextOffer();
+showTutPhase(0);
 
 // ═══════════════════════════════════════
 // ACT 2 CLICKER
