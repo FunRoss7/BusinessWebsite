@@ -107,8 +107,10 @@ nav {
   border-bottom: 1px solid var(--grain);
 }
 
-.section-card-link { display: block; text-decoration: none; color: inherit; border-right: 1px solid var(--grain); transition: background 0.18s, border-color 0.18s; }
-.section-card-link:last-child { border-right: none; }
+.sections-grid > * { border-right: 1px solid var(--grain); }
+.sections-grid > *:last-child { border-right: none; }
+
+.section-card-link { display: block; text-decoration: none; color: inherit; transition: background 0.18s, border-color 0.18s; }
 .section-card-link:hover { background: rgba(255,255,255,0.04); }
 .section-card-link:hover .sc-frame { border-color: var(--gold-lt); }
 .section-card-link:hover .sc-title { color: var(--gold-lt); }
