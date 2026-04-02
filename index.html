@@ -25,16 +25,18 @@
     --frame:   #b89040;
   }
 
-  .site { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--cream); border-radius: 10px; overflow: hidden; }
+  .site { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--cream); }
 
   .carpet-stripe { height: 4px; background: var(--carpet); }
 
   nav {
     display: flex; align-items: stretch; justify-content: space-between;
-    padding-left: 2.4rem; border-bottom: 1px solid var(--grain); background: var(--bg2);
+    padding-left: 0; border-bottom: 1px solid var(--grain); background: var(--bg2);
   }
-  .nav-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 19px; color: var(--gold-lt); display: flex; align-items: center; padding: 1.3rem 0; }
-  .nav-links { display: flex; gap: 0; list-style: none; }
+  .nav-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 24px; letter-spacing: 0.06em; color: var(--gold-lt); display: flex; align-items: center; padding: 0 2.4rem; text-decoration: none; border-right: 1px solid var(--gold-d); transition: color 0.15s, background 0.15s; min-height: 4rem; }
+  .nav-logo:hover { color: var(--cream); background: rgba(184,144,64,0.07); }
+  .nav-links { display: flex; gap: 0; list-style: none; align-self: stretch; align-items: stretch; }
+  .nav-links li { display: flex; }
   .nav-links a { font-size: 11px; color: var(--cream3); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.15s, background 0.15s; display: flex; align-items: center; padding: 0 1.6rem; border-left: 1px solid var(--gold-d); }
   .nav-links a:hover { color: var(--gold-lt); background: rgba(184,144,64,0.07); }
 
@@ -200,7 +202,8 @@
     display: flex; align-items: stretch; justify-content: space-between;
   }
   .footer-sig { font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--cream3); display: flex; align-items: center; }
-  .footer-links { display: flex; gap: 0; list-style: none; }
+  .footer-links { display: flex; gap: 0; list-style: none; align-self: stretch; align-items: stretch; }
+  .footer-links li { display: flex; }
   .footer-links a { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream3); text-decoration: none; display: flex; align-items: center; padding: 1.1rem 1.4rem; border-left: 1px solid var(--gold-d); transition: color 0.15s, background 0.15s; }
   .footer-links a:hover { color: var(--gold-lt); background: rgba(184,144,64,0.07); }
 </style>
@@ -211,7 +214,7 @@
   <div class="carpet-stripe"></div>
 
   <nav>
-    <span class="nav-logo">Ross Carlson</span>
+    <a class="nav-logo" href="index.html">Ross Carlson</a>
     <ul class="nav-links">
       <li><a href="lab.html">Lab</a></li>
       <li><a href="gallery.html">Gallery</a></li>
