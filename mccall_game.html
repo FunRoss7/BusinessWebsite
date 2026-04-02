@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Waiting Game — McCall Job Search</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --bg:     #0f0e0c;
+  --paper:  #1a1814;
+  --ink:    #e8e0d0;
+  --muted:  #7a7060;
+  --rule:   #2e2a24;
+  --gold:   #d4a843;
+  --red:    #c44b3a;
+  --blue:   #4a8fa8;
+  --green:  #5a9e6f;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+.act {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 24px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.act-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(28px, 5.5vw, 48px);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 24px;
+  color: var(--ink);
+}
+h1 em { color: var(--gold); font-style: italic; }
+h2 {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 3.8vw, 32px);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 18px;
+  color: var(--ink);
+}
+h2 em { color: var(--gold); font-style: italic; }
+
+p { font-size: 15.5px; color: #b8b0a0; margin-bottom: 14px; max-width: 640px; }
+p strong { color: var(--ink); font-weight: 500; }
+p em { color: var(--gold); font-style: italic; }
+
+.divider { width: 40px; height: 2px; background: var(--gold); opacity: 0.4; margin: 32px 0; }
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin: 20px 0;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  max-width: 760px; margin: 0 auto; padding: 80px 24px;
+}
+.scroll-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-top: 48px;
+  display: flex; align-items: center; gap: 12px;
+}
+.scroll-hint::after {
+  content: ''; display: block; width: 1px; height: 40px;
+  background: var(--muted);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.8} }
+
+/* ACT 1 */
+.offer-display { text-align: center; padding: 24px 0 16px; }
+.offer-week {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+}
+.offer-number {
+  font-family: 'Lora', serif; font-size: 64px; font-weight: 600;
+  color: var(--gold); line-height: 1; margin-bottom: 6px;
+}
+.offer-number.pop { animation: offerPop 0.35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes offerPop { 0%{transform:scale(.7);opacity:.3} 100%{transform:scale(1);opacity:1} }
+.offer-sub { font-size: 12px; color: var(--muted); }
+
+.decision-btns { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+.btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  border: none; border-radius: 4px; padding: 12px 28px;
+  cursor: pointer; transition: all 0.15s; font-weight: 600;
+}
+.btn-accept { background: var(--green); color: #fff; }
+.btn-accept:hover { background: #6dba85; transform: translateY(-1px); }
+.btn-reject { background: transparent; border: 1px solid var(--rule); color: var(--muted); }
+.btn-reject:hover { border-color: var(--red); color: var(--red); }
+.btn:disabled { opacity: 0.3; cursor: default; transform: none !important; }
+
+.benefits-row {
+  display: flex; gap: 20px; justify-content: center;
+  margin-top: 14px; flex-wrap: wrap;
+}
+.bstat { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+.bstat span { color: var(--blue); }
+
+/* offer table */
+.table-wrap { overflow-x: auto; margin-top: 16px; border-radius: 6px; border: 1px solid var(--rule); }
+table { border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 11px; min-width: 100%; }
+th {
+  background: #111009; color: var(--muted); padding: 7px 9px;
+  text-align: center; border-bottom: 1px solid var(--rule);
+  font-weight: 400; letter-spacing: 0.05em; white-space: nowrap;
+}
+th.row-label { text-align: left; min-width: 80px; }
+td {
+  padding: 5px 9px; text-align: center;
+  border-bottom: 1px solid rgba(46,42,36,0.5);
+  color: #4a4540; white-space: nowrap;
+}
+td.row-label { text-align: left; color: var(--muted); }
+td.sub-row { color: #38342e; font-size: 10px; }
+td.cell-best { background: rgba(212,168,67,0.14) !important; color: var(--gold) !important; }
+td.cell-user { background: rgba(90,158,111,0.14) !important; color: var(--green) !important; }
+td.cell-user-best {
+  background: rgba(212,168,67,0.22) !important; color: var(--gold) !important;
+  outline: 2px solid var(--gold); outline-offset: -2px;
+}
+tr:hover td { background: rgba(255,255,255,0.012); }
+
+.table-legend { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+.tleg { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.tleg-sw { width: 12px; height: 12px; border-radius: 2px; }
+
+.reveal-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 20px; }
+.rstat { background: rgba(255,255,255,0.02); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; text-align: center; }
+.rstat-val { font-family: 'Lora', serif; font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+.rstat-lbl { font-size: 11px; color: var(--muted); line-height: 1.3; }
+.rstat.good .rstat-val { color: var(--green); }
+.rstat.bad  .rstat-val { color: var(--red); }
+.rstat.neutral .rstat-val { color: var(--gold); }
+
+.reveal-narrative {
+  margin-top: 16px; padding: 14px 18px;
+  background: rgba(212,168,67,0.05);
+  border-left: 2px solid rgba(212,168,67,0.35);
+  border-radius: 0 4px 4px 0;
+  font-size: 13.5px; color: #a09880; line-height: 1.65;
+}
+.reveal-narrative strong { color: var(--ink); }
+
+/* ACT 2 CLICKER */
+.clicker-arena { text-align: center; padding: 16px 0; }
+.click-btn {
+  width: 130px; height: 130px; border-radius: 50%;
+  border: 2px solid var(--gold); background: transparent;
+  cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  margin: 0 auto 20px; transition: all 0.1s;
+  user-select: none; -webkit-user-select: none;
+}
+.click-btn:active { transform: scale(0.91); background: rgba(212,168,67,0.08); }
+.click-cps-big {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px; font-weight: 600; color: var(--ink); display: block;
+}
+.click-sub {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 2px;
+}
+.cps-meter { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.cps-bar-track { flex: 1; height: 5px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.cps-bar-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--green), var(--gold), var(--red));
+  transition: width 0.25s ease;
+}
+.cps-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); min-width: 52px; text-align: right; }
+.exhaustion { font-size: 12px; color: var(--red); font-style: italic; min-height: 16px; opacity: 0; transition: opacity 0.3s; }
+.exhaustion.show { opacity: 1; }
+.needs-ladder { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.need-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 14px; border-radius: 6px; border: 1px solid var(--rule);
+  opacity: 0.3; transform: translateX(-6px); transition: all 0.35s ease;
+}
+.need-row.unlocked { opacity: 1; transform: translateX(0); border-color: var(--green); background: rgba(90,158,111,0.06); }
+.need-icon { font-size: 24px; filter: grayscale(1); transition: filter 0.35s; width: 32px; text-align: center; flex-shrink: 0; }
+.need-row.unlocked .need-icon { filter: grayscale(0); }
+.need-body { flex: 1; }
+.need-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 1px; }
+.need-desc { font-size: 11px; color: var(--muted); line-height: 1.3; }
+.need-thresh { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); flex-shrink: 0; }
+.need-row.unlocked .need-thresh { color: var(--green); }
+
+/* ACT 3 LEVERAGE */
+.persona-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+.persona { border: 1px solid var(--rule); border-radius: 6px; padding: 14px; cursor: pointer; transition: all 0.25s; }
+.persona:hover { border-color: rgba(212,168,67,0.3); }
+.persona.active { border-color: var(--gold); background: rgba(212,168,67,0.04); }
+.persona-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 5px; }
+.persona-story { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+.persona-beta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); }
+.persona-meter { height: 3px; background: var(--rule); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.persona-meter-fill { height: 100%; border-radius: 2px; background: var(--gold); transition: width 0.5s; }
+
+input[type=range] {
+  -webkit-appearance: none; width: 100%; height: 2px;
+  background: var(--rule); border-radius: 2px; outline: none; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--gold); border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--gold); transition: transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+.lev-slider-wrap { margin-bottom: 14px; }
+.lev-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+.lev-label .lname { color: var(--ink); }
+.lev-label .lval { font-family: 'JetBrains Mono', monospace; color: var(--blue); }
+.lev-prose {
+  padding: 12px 16px;
+  background: rgba(74,143,168,0.06);
+  border-left: 2px solid rgba(74,143,168,0.35);
+  border-radius: 0 4px 4px 0;
+  font-size: 13px; color: #9898a8; line-height: 1.6; margin-top: 12px;
+}
+.lev-prose strong { color: var(--ink); }
+
+/* ACT 4 SEPARATION */
+.sep-scenario { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.sep-card { border: 1px solid var(--rule); border-radius: 6px; padding: 14px; }
+.sep-card-title { font-size: 12px; font-weight: 500; margin-bottom: 8px; }
+.sep-bar-label { font-size: 11px; color: var(--muted); margin-bottom: 3px; display: flex; justify-content: space-between; }
+.sep-bar-track { height: 5px; background: var(--rule); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.sep-bar-fill { height: 100%; border-radius: 3px; }
+
+/* ACT 5 BELLMAN */
+.bellman-steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+.bell-step {
+  border: 1px solid var(--rule); border-radius: 6px; overflow: hidden;
+  opacity: 0; transform: translateY(12px); transition: all 0.4s ease;
+}
+.bell-step.show { opacity: 1; transform: translateY(0); }
+.bell-step-header {
+  background: #111009; padding: 12px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+.bell-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  color: var(--muted); width: 18px; flex-shrink: 0; padding-top: 2px;
+}
+.bell-eq {
+  font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+  color: var(--ink); flex: 1; line-height: 1.6;
+}
+.bell-eq .tb { color: #6ab4d0; }
+.bell-eq .tr { color: #d47060; }
+.bell-eq .tg { color: var(--gold); }
+.bell-eq .tm { color: #605850; }
+.bell-body { padding: 14px 16px; }
+.bell-prose { font-size: 13.5px; color: #a8a090; line-height: 1.65; }
+.bell-prose strong { color: var(--ink); }
+
+.eq-next-btn {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+  border: 1px solid rgba(212,168,67,0.3); padding: 9px 20px;
+  border-radius: 4px; cursor: pointer; background: transparent;
+  transition: all 0.15s; margin-top: 12px; display: inline-block;
+}
+.eq-next-btn:hover { background: rgba(212,168,67,0.08); }
+.eq-next-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* ACT 6 FULL MODEL */
+.controls-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 20px; margin: 18px 0;
+}
+.control-group label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.param-name { font-family: 'Lora', serif; font-style: italic; font-size: 20px; color: var(--gold); }
+.param-full { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.param-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--blue); }
+.hint { font-size: 11px; color: var(--muted); margin-top: 7px; }
+
+.outputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+.stat-card { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 20px; border-top: 2px solid transparent; }
+.stat-card.red  { border-top-color: var(--red); }
+.stat-card.blue { border-top-color: var(--blue); }
+.stat-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.stat-val { font-family: 'Lora', serif; font-size: 34px; font-weight: 600; line-height: 1; }
+.stat-card.red  .stat-val { color: var(--red); }
+.stat-card.blue .stat-val { color: var(--blue); }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+.chart-wrap { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 18px 12px; margin: 16px 0; }
+.chart-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+canvas { display: block; width: 100% !important; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.legend-swatch { width: 18px; height: 2px; border-radius: 2px; }
+
+.narrative-box {
+  background: rgba(212,168,67,0.04); border-left: 2px solid rgba(212,168,67,0.35);
+  padding: 14px 18px; border-radius: 0 4px 4px 0;
+  font-size: 13.5px; color: #a09880; line-height: 1.7; margin: 14px 0;
+}
+.narrative-box strong { color: var(--ink); }
+
+@media (max-width:500px) {
+  .outputs { grid-template-columns: 1fr; }
+  .reveal-stats { grid-template-columns: 1fr; }
+  .persona-cards { grid-template-columns: 1fr; }
+  .sep-scenario { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="act-label">The Waiting Game · McCall 1970</div>
+  <h1>Every week brings<br>a new offer.<br><em>When do you say yes?</em></h1>
+  <p>A job offer just arrived. It's decent — but is it good enough? What if something better shows up next week? And what if you wait too long and the bills pile up?</p>
+  <p>This is the <strong>job search problem</strong>. It's been studied by economists for 50 years. You're about to feel exactly why it's hard — and then learn the math that solves it.</p>
+  <div class="scroll-hint">scroll to begin</div>
+</div>
+
+<!-- ACT 1 -->
+<div class="act" id="act1">
+  <div class="act-label">Act I · The Search</div>
+  <h2>You're unemployed.<br>Offers arrive <em>randomly.</em></h2>
+  <p>Each week, one wage offer appears. <strong>Accept</strong> and earn that wage forever. <strong>Reject</strong> and collect <strong>$10</strong> in benefits while you wait. Wages are drawn from a distribution centered at $50. You never know what's coming next.</p>
+
+  <div class="card" id="search-card">
+    <div class="offer-display">
+      <div class="offer-week" id="offer-week">Week 1</div>
+      <div class="offer-number" id="offer-number">—</div>
+      <div class="offer-sub">this week's wage offer</div>
+    </div>
+    <div class="benefits-row">
+      <div class="bstat">Benefits collected: <span id="benefits-total">$0</span></div>
+      <div class="bstat">Weeks: <span id="weeks-count">0</span></div>
+      <div class="bstat">Best seen: <span id="best-seen">—</span></div>
+    </div>
+    <div class="decision-btns">
+      <button class="btn btn-reject" id="btn-reject" onclick="rejectOffer()">Reject — keep searching</button>
+      <button class="btn btn-accept" id="btn-accept" onclick="acceptOffer()">Accept this offer</button>
+    </div>
+  </div>
+
+  <div id="timeline-reveal" style="display:none">
+    <div class="divider"></div>
+    <h2>Here's what <em>actually happened.</em></h2>
+    <p>The table shows every offer across your search and 19 simulated agents. Each cell is the wage offered that week. The row below each agent shows what their <strong>lifetime earnings</strong> would have been had they accepted at that moment (assuming β = 0.9).</p>
+    <p><span style="color:var(--gold)">Gold</span> = best offer that agent ever saw. <span style="color:var(--green)">Green</span> = what was actually accepted.</p>
+
+    <div class="table-wrap"><table id="offer-table"></table></div>
+    <div class="table-legend">
+      <div class="tleg"><div class="tleg-sw" style="background:rgba(212,168,67,0.25)"></div>Best offer seen</div>
+      <div class="tleg"><div class="tleg-sw" style="background:rgba(90,158,111,0.25)"></div>Accepted offer</div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <div class="reveal-stats" id="reveal-stats"></div>
+      <div class="reveal-narrative" id="reveal-narrative"></div>
+    </div>
+
+    <p style="margin-top:20px">Notice the spread: <strong>identical rules, completely different outcomes.</strong> Random luck accounts for most of the variation. The model's job is to find the single best rule given that uncertainty. Before we get there, two building blocks.</p>
+  </div>
+</div>
+
+<!-- ACT 2 -->
+<div class="act" id="act2">
+  <div class="act-label">Act II · Utility</div>
+  <h2>Money doesn't go<br>as far as you think.<br><em>Feel it.</em></h2>
+  <p>Click as fast as you can. Your clicks per second are your wage. Watch what each burst actually buys you.</p>
+
+  <div class="card">
+    <div class="clicker-arena">
+      <div class="cps-meter">
+        <div class="cps-bar-track"><div class="cps-bar-fill" id="cps-bar" style="width:0%"></div></div>
+        <div class="cps-val"><span id="cps-display">0.0</span> /s</div>
+      </div>
+      <div class="exhaustion" id="exhaustion">You're at human limits. Another click buys almost nothing new.</div>
+      <button class="click-btn" id="click-btn" onclick="handleClick()">
+        <span class="click-cps-big" id="click-cps-big">0.0</span>
+        <span class="click-sub">clicks / sec</span>
+      </button>
+    </div>
+    <div class="needs-ladder">
+      <div class="need-row" id="need-0"><div class="need-icon">🍞</div><div class="need-body"><div class="need-name">Food</div><div class="need-desc">Enough to eat today. Hunger gone.</div></div><div class="need-thresh">≥ 0.5/s</div></div>
+      <div class="need-row" id="need-1"><div class="need-icon">🏥</div><div class="need-body"><div class="need-name">Safety &amp; Healthcare</div><div class="need-desc">A doctor when you need one. Basic security.</div></div><div class="need-thresh">≥ 1.5/s</div></div>
+      <div class="need-row" id="need-2"><div class="need-icon">🏠</div><div class="need-body"><div class="need-name">Shelter</div><div class="need-desc">Stable housing. Not worrying about rent.</div></div><div class="need-thresh">≥ 3.0/s</div></div>
+      <div class="need-row" id="need-3"><div class="need-icon">🚗</div><div class="need-body"><div class="need-name">Transportation</div><div class="need-desc">A reliable car. Getting to work without stress.</div></div><div class="need-thresh">≥ 5.5/s</div></div>
+      <div class="need-row" id="need-4"><div class="need-icon">🛋️</div><div class="need-body"><div class="need-name">Comfort</div><div class="need-desc">Business class. Nice apartment. Small luxuries.</div></div><div class="need-thresh">≥ 9.0/s</div></div>
+    </div>
+  </div>
+
+  <p>Economists write this as <strong>u(w) = ln(w)</strong>. The logarithm compresses large numbers — exactly like your clicking did. The jump from $1 to $10 is enormous. The jump from $1,000 to $1,010 is nearly invisible. This is why a worker at $20/hr will quit for $25 but a worker at $90/hr won't bother.</p>
+</div>
+
+<!-- ACT 3 -->
+<div class="act" id="act3">
+  <div class="act-label">Act III · Patience &amp; Leverage</div>
+  <h2>How patient can<br>you <em>afford</em> to be?</h2>
+  <p>Patience isn't a personality trait here — it's a financial position. Your discount factor <strong>β</strong> answers one question: <em>how much trouble are you in right now, and how confident are you that waiting won't make it worse?</em></p>
+  <p>Someone with a repo notice on their car and an empty account can't wait. Someone with three months of runway and no debt can afford to be very picky.</p>
+
+  <div class="card">
+    <div class="persona-cards">
+      <div class="persona" id="persona-0" onclick="selectPersona(0)">
+        <div class="persona-name">Alex</div>
+        <div class="persona-story">Two months behind on rent. Car note overdue. Borrowing from family. Each week without income is a genuine crisis.</div>
+        <div class="persona-beta">β ≈ 0.60</div>
+        <div class="persona-meter"><div class="persona-meter-fill" style="width:20%"></div></div>
+      </div>
+      <div class="persona" id="persona-1" onclick="selectPersona(1)">
+        <div class="persona-name">Jordan</div>
+        <div class="persona-story">Paycheck to paycheck but current on bills. Small cushion. Can survive a few more weeks — but not many.</div>
+        <div class="persona-beta">β ≈ 0.80</div>
+        <div class="persona-meter"><div class="persona-meter-fill" style="width:50%"></div></div>
+      </div>
+      <div class="persona" id="persona-2" onclick="selectPersona(2)">
+        <div class="persona-name">Morgan</div>
+        <div class="persona-story">Six months emergency fund. No debt. Searching from strength — the next job needs to actually be right.</div>
+        <div class="persona-beta">β ≈ 0.93</div>
+        <div class="persona-meter"><div class="persona-meter-fill" style="width:80%"></div></div>
+      </div>
+      <div class="persona active" id="persona-3" onclick="selectPersona(3)">
+        <div class="persona-name">You</div>
+        <div class="persona-story">Set your own situation with the slider below.</div>
+        <div class="persona-beta" id="your-beta-label">β = 0.90</div>
+        <div class="persona-meter"><div class="persona-meter-fill" id="your-beta-meter" style="width:75%"></div></div>
+      </div>
+    </div>
+    <div class="lev-slider-wrap">
+      <div class="lev-label">
+        <span class="lname">Your β — financial runway</span>
+        <span class="lval" id="lev-beta-val">0.90</span>
+      </div>
+      <input type="range" id="lev-beta" min="0.50" max="0.99" step="0.01" value="0.90" oninput="updateLeverage(this.value)">
+    </div>
+    <div class="lev-prose" id="lev-prose"></div>
+  </div>
+
+  <p>Higher β doesn't make you more virtuous or strategic. It means the world is giving you the luxury of time. The math treats both situations equally — it just finds the best rule given your actual position.</p>
+</div>
+
+<!-- ACT 4 -->
+<div class="act" id="act4">
+  <div class="act-label">Act IV · Job Loss</div>
+  <h2>What if the job<br>doesn't <em>last forever?</em></h2>
+  <p>We've assumed: accept a job, earn that wage forever. But jobs end. Companies downsize. Contracts expire. You might be back here sooner than you think.</p>
+  <p>We model this with a <strong>separation rate α</strong>: each period there's an α chance you get laid off and return to searching. This changes what a job offer is actually worth.</p>
+
+  <div class="card">
+    <div class="sep-scenario">
+      <div class="sep-card">
+        <div class="sep-card-title" style="color:var(--green)">Stable role (α = 0.02)</div>
+        <div class="sep-bar-label"><span>Expected tenure</span><span style="color:var(--green)">~50 weeks</span></div>
+        <div class="sep-bar-track"><div class="sep-bar-fill" style="width:90%;background:var(--green)"></div></div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5">Essentially permanent. Each accepted offer is a long-term commitment. Worth being selective.</div>
+      </div>
+      <div class="sep-card">
+        <div class="sep-card-title" style="color:var(--red)">Precarious role (α = 0.25)</div>
+        <div class="sep-bar-label"><span>Expected tenure</span><span style="color:var(--red)">~4 weeks</span></div>
+        <div class="sep-bar-track"><div class="sep-bar-fill" style="width:20%;background:var(--red)"></div></div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5">Contract or gig. High churn. Accepting a bad offer just means you'll be searching again soon anyway.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px">
+      <div class="lev-slider-wrap">
+        <div class="lev-label">
+          <span class="lname">Separation rate α</span>
+          <span class="lval" id="alpha-demo-val">0.10</span>
+        </div>
+        <input type="range" id="alpha-demo" min="0.00" max="0.50" step="0.01" value="0.10" oninput="updateAlphaDemo(this.value)">
+      </div>
+      <div class="lev-prose" id="alpha-prose"></div>
+    </div>
+  </div>
+
+  <p>Counterintuitively, <strong>higher job insecurity lowers your reservation wage.</strong> If you'll likely be searching again soon regardless, holding out for perfect costs more than it saves. The model captures this exactly.</p>
+</div>
+
+<!-- ACT 5 BELLMAN -->
+<div class="act" id="act5">
+  <div class="act-label">Act V · The Decision Rule</div>
+  <h2>Now let's build<br>the <em>Bellman equation.</em></h2>
+  <p>We have all the pieces. The Bellman equation is the mathematical decision rule that ties it all together. Click through to build it one piece at a time.</p>
+
+  <div class="card">
+    <div class="bellman-steps" id="bell-steps"></div>
+    <button class="eq-next-btn" id="eq-btn" onclick="revealNextBell()">Reveal next piece →</button>
+  </div>
+
+  <div id="bell-conclusion" style="display:none;margin-top:20px">
+    <p>The reservation wage <strong>w*</strong> is where accepting and rejecting are exactly equal. Below it, keep searching. Above it, accept. The model finds this crossing exactly — no guessing required.</p>
+    <p>Now put all three parameters in your hands.</p>
+  </div>
+</div>
+
+<!-- ACT 6 FULL MODEL -->
+<div class="act" id="act6" style="min-height:auto;padding-bottom:120px">
+  <div class="act-label">Act VI · The Full Model</div>
+  <h2>Your optimal<br><em>reservation wage.</em></h2>
+  <p>Adjust the three parameters. The model solves instantly.</p>
+
+  <div class="card controls-grid">
+    <div class="control-group">
+      <label>
+        <span><span class="param-name">β</span> <span class="param-full">runway</span></span>
+        <span class="param-val" id="val-beta">0.90</span>
+      </label>
+      <input type="range" id="sl-beta" min="0.50" max="0.99" step="0.01" value="0.90" oninput="update()">
+      <div class="hint">More runway → pickier</div>
+    </div>
+    <div class="control-group">
+      <label>
+        <span><span class="param-name">c</span> <span class="param-full">benefits</span></span>
+        <span class="param-val" id="val-c">20</span>
+      </label>
+      <input type="range" id="sl-c" min="1" max="45" step="1" value="20" oninput="update()">
+      <div class="hint">Higher benefits → higher outside option</div>
+    </div>
+    <div class="control-group">
+      <label>
+        <span><span class="param-name">α</span> <span class="param-full">separation</span></span>
+        <span class="param-val" id="val-alpha">0.10</span>
+      </label>
+      <input type="range" id="sl-alpha" min="0.00" max="0.50" step="0.01" value="0.10" oninput="update()">
+      <div class="hint">More insecurity → lower w*</div>
+    </div>
+  </div>
+
+  <div class="outputs">
+    <div class="stat-card red">
+      <div class="stat-lbl">Reservation Wage w*</div>
+      <div class="stat-val" id="out-wstar">—</div>
+      <div class="stat-sub">Reject any offer below this</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-lbl">Mean Search Duration</div>
+      <div class="stat-val" id="out-dur">—</div>
+      <div class="stat-sub">Expected weeks until acceptance</div>
+    </div>
+  </div>
+
+  <div class="narrative-box" id="model-narrative">Computing…</div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Value Functions &amp; Reservation Wage</div>
+    <canvas id="chart-vf" height="250"></canvas>
+    <div class="legend" id="legend-vf"></div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Wage Offer Distribution — Accepted vs. Rejected</div>
+    <canvas id="chart-dist" height="180"></canvas>
+    <div class="legend" id="legend-dist"></div>
+  </div>
+
+  <div style="margin-top:48px;padding-top:28px;border-top:1px solid var(--rule);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.8">
+    Model: McCall (1970) with job separation · Wages ~ N(50,10) on [0,100] · 60-point grid<br>
+    Fixed-point iteration on scalar continuation value · Reservation wage via linear interpolation
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// MATH ENGINE
+// ═══════════════════════════════════════
+function normRandom(mu=50,sigma=10){
+  let u=0,v=0;
+  while(!u)u=Math.random();while(!v)v=Math.random();
+  return mu+sigma*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+function normPdf(x,mu=50,sigma=10){
+  return Math.exp(-0.5*((x-mu)/sigma)**2)/(sigma*Math.sqrt(2*Math.PI));
+}
+function normCdf(x,mu=50,sigma=10){
+  const z=(x-mu)/(sigma*Math.SQRT2);
+  const t=1/(1+0.3275911*Math.abs(z));
+  const p=t*(0.254829592+t*(-0.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));
+  const e=1-p*Math.exp(-z*z);
+  return 0.5*(1+(z>=0?e:-e));
+}
+function uLog(w){return Math.log(Math.max(w,1e-10));}
+function buildGrid(){
+  const w=new Float64Array(60),q=new Float64Array(60);
+  for(let i=0;i<60;i++)w[i]=i/59*100;
+  let s=0;for(let i=0;i<60;i++){q[i]=normPdf(w[i]);s+=q[i];}
+  for(let i=0;i<60;i++)q[i]/=s;
+  return{w,q};
+}
+function solve(beta,c,alpha,tol=1e-8){
+  const{w,q}=buildGrid();
+  const denom=1-beta*(1-alpha),uc=uLog(c);
+  let d=0;for(let i=0;i<60;i++)d+=uLog(w[i])/(1-beta)*q[i];
+  for(let k=0;k<5000;k++){
+    let dn=0;
+    for(let i=0;i<60;i++){const vi=(uLog(w[i])+beta*alpha*d)/denom;dn+=Math.max(vi,uc+beta*d)*q[i];}
+    if(Math.abs(dn-d)<tol){d=dn;break;}d=dn;
+  }
+  const v=new Float64Array(60),h=new Float64Array(60),thr=uc+beta*d;
+  for(let i=0;i<60;i++){v[i]=(uLog(w[i])+beta*alpha*d)/denom;h[i]=Math.max(v[i],thr);}
+  let wStar=w[59];
+  for(let i=1;i<60;i++){
+    if(v[i]>=thr){const t=(thr-v[i-1])/(v[i]-v[i-1]);wStar=w[i-1]+t*(w[i]-w[i-1]);break;}
+  }
+  return{w,q,v,h,d,wStar,thr,meanDur:1/Math.max(1-normCdf(wStar),1e-9)};
+}
+
+// ═══════════════════════════════════════
+// ACT 1
+// ═══════════════════════════════════════
+const BETA_A1=0.9,C_A1=10;
+let s1={week:0,offers:[],benefitsTotal:0,currentOffer:null};
+
+function drawW(){return Math.max(0.1,Math.round(normRandom(50,10)*10)/10);}
+
+function nextOffer(){
+  s1.week++;s1.currentOffer=drawW();
+  const el=document.getElementById('offer-number');
+  el.textContent='$'+s1.currentOffer.toFixed(1);
+  el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
+  document.getElementById('offer-week').textContent='Week '+s1.week;
+  document.getElementById('weeks-count').textContent=s1.week;
+  document.getElementById('benefits-total').textContent='$'+s1.benefitsTotal;
+  const allW=[...s1.offers.map(o=>o.w),s1.currentOffer];
+  document.getElementById('best-seen').textContent='$'+Math.max(...allW).toFixed(1);
+}
+
+function rejectOffer(){
+  s1.offers.push({w:s1.currentOffer,accepted:false});
+  s1.benefitsTotal+=C_A1;nextOffer();
+}
+
+function acceptOffer(){
+  s1.offers.push({w:s1.currentOffer,accepted:true});
+  document.getElementById('btn-accept').disabled=true;
+  document.getElementById('btn-reject').disabled=true;
+  buildReveal();
+}
+
+function lifetimeVal(wage){return Math.round(wage/(1-BETA_A1));}
+
+function buildReveal(){
+  const res=solve(BETA_A1,C_A1,0.10);
+  const wStar=res.wStar;
+  const N_AGENTS=19;
+  const userOffers=s1.offers.map(o=>o.w);
+  const userAccepted=s1.offers.find(o=>o.accepted);
+  const nWeeks=userOffers.length;
+
+  // simulate agents — each searches until w>=wStar or same number of weeks as user
+  const agents=[];
+  for(let a=0;a<N_AGENTS;a++){
+    const hist=[];let accepted=null;
+    for(let t=0;t<Math.max(nWeeks,10);t++){
+      const w=drawW();hist.push(w);
+      if(w>=wStar&&!accepted){accepted={w,t};break;}
+    }
+    if(!accepted){
+      // didn't find w>=wStar in time; accept best seen
+      const bestIdx=hist.reduce((bi,w,i)=>w>hist[bi]?i:bi,0);
+      accepted={w:hist[bestIdx],t:bestIdx};
+    }
+    agents.push({hist,accepted});
+  }
+
+  const colCount=Math.max(nWeeks,...agents.map(a=>a.hist.length));
+  const tbl=document.getElementById('offer-table');
+  tbl.innerHTML='';
+
+  // header row
+  let hr=`<tr><th class="row-label">Agent</th>`;
+  for(let t=1;t<=colCount;t++)hr+=`<th>Wk ${t}</th>`;
+  hr+=`<th>Accepted</th><th>Lifetime $</th></tr>`;
+  tbl.insertAdjacentHTML('beforeend',hr);
+
+  function agentRows(label,hist,accepted,isUser){
+    const bestW=Math.max(...hist);
+    let r=`<tr><td class="row-label" style="${isUser?'color:var(--green)':''}">${label}</td>`;
+    for(let t=0;t<colCount;t++){
+      const w=hist[t];
+      if(w===undefined){r+='<td></td>';continue;}
+      const isAcc=(t===accepted.t&&w===accepted.w);
+      const isBest=(w===bestW);
+      let cls='';
+      if(isAcc&&isBest)cls='cell-user-best';
+      else if(isAcc)cls='cell-user';
+      else if(isBest)cls='cell-best';
+      r+=`<td class="${cls}">${w.toFixed(1)}</td>`;
+    }
+    r+=`<td class="cell-user">$${accepted.w.toFixed(1)}</td><td style="color:#5a7060;font-size:10px">$${lifetimeVal(accepted.w).toLocaleString()}</td></tr>`;
+    // earnings sub-row
+    r+=`<tr><td class="row-label sub-row">if accepted →</td>`;
+    for(let t=0;t<colCount;t++){
+      const w=hist[t];
+      r+=w===undefined?`<td></td>`:`<td class="sub-row">$${lifetimeVal(w).toLocaleString()}</td>`;
+    }
+    r+=`<td></td><td></td></tr>`;
+    return r;
+  }
+
+  // user first
+  tbl.insertAdjacentHTML('beforeend', agentRows('▶ You', userOffers, userAccepted, true));
+  // separator
+  tbl.insertAdjacentHTML('beforeend',`<tr><td colspan="${colCount+3}" style="height:6px;background:#111009;border:none"></td></tr>`);
+  // agents
+  agents.forEach((ag,i)=>tbl.insertAdjacentHTML('beforeend', agentRows(`Agent ${i+1}`, ag.hist, ag.accepted, false)));
+
+  // stats
+  const allAccW=[userAccepted.w,...agents.map(a=>a.accepted.w)];
+  const avg=allAccW.reduce((a,b)=>a+b,0)/allAccW.length;
+  const rank=allAccW.filter(w=>w<userAccepted.w).length+1;
+  const pct=Math.round(rank/allAccW.length*100);
+  document.getElementById('reveal-stats').innerHTML=`
+    <div class="rstat neutral"><div class="rstat-val">$${userAccepted.w.toFixed(1)}</div><div class="rstat-lbl">Your wage<br>Week ${nWeeks}</div></div>
+    <div class="rstat ${userAccepted.w>=avg?'good':'bad'}"><div class="rstat-val">$${avg.toFixed(1)}</div><div class="rstat-lbl">Average across<br>all 20 agents</div></div>
+    <div class="rstat ${pct>=50?'good':'bad'}"><div class="rstat-val">${pct}th</div><div class="rstat-lbl">Your percentile<br>among agents</div></div>`;
+
+  const diff=userAccepted.w-wStar;
+  let prose=`The optimal reservation wage for these parameters is <strong>$${wStar.toFixed(1)}</strong>. `;
+  if(Math.abs(diff)<2) prose+=`You accepted $${userAccepted.w.toFixed(1)} — essentially optimal. The model would have done almost the same thing.`;
+  else if(diff>0) prose+=`You accepted $${userAccepted.w.toFixed(1)}, above the optimal threshold. Solid result — though you could have accepted a little earlier without much loss.`;
+  else prose+=`You accepted $${userAccepted.w.toFixed(1)}, below the optimal threshold of $${wStar.toFixed(1)}. The model says you settled a bit early. A few more weeks of searching would have paid off in expectation.`;
+  document.getElementById('reveal-narrative').innerHTML=prose;
+
+  const rev=document.getElementById('timeline-reveal');
+  rev.style.display='block';
+  rev.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+nextOffer();
+
+// ═══════════════════════════════════════
+// ACT 2 CLICKER
+// ═══════════════════════════════════════
+let clickTimes=[];
+const NTH=[0.5,1.5,3.0,5.5,9.0];
+function handleClick(){
+  clickTimes.push(Date.now());
+  document.getElementById('click-btn').style.transform='scale(0.91)';
+  setTimeout(()=>document.getElementById('click-btn').style.transform='',80);
+  refreshCPS();
+}
+function refreshCPS(){
+  const now=Date.now();
+  clickTimes=clickTimes.filter(t=>now-t<=1000);
+  const cps=clickTimes.length;
+  document.getElementById('cps-display').textContent=cps.toFixed(1);
+  document.getElementById('click-cps-big').textContent=cps.toFixed(1);
+  document.getElementById('cps-bar').style.width=Math.min(cps/12*100,100)+'%';
+  NTH.forEach((th,i)=>document.getElementById('need-'+i).classList.toggle('unlocked',cps>=th));
+  document.getElementById('exhaustion').classList.toggle('show',cps>=8);
+}
+setInterval(()=>{clickTimes=clickTimes.filter(t=>Date.now()-t<=1000);refreshCPS();},200);
+
+// ═══════════════════════════════════════
+// ACT 3 LEVERAGE
+// ═══════════════════════════════════════
+const PB=[0.60,0.80,0.93,0.90];
+function selectPersona(i){
+  document.querySelectorAll('.persona').forEach((el,j)=>el.classList.toggle('active',j===i));
+  if(i<3){document.getElementById('lev-beta').value=PB[i];updateLeverage(PB[i]);}
+}
+function updateLeverage(val){
+  const b=parseFloat(val);
+  document.getElementById('lev-beta-val').textContent=b.toFixed(2);
+  document.getElementById('your-beta-label').textContent='β = '+b.toFixed(2);
+  document.getElementById('your-beta-meter').style.width=((b-0.5)/0.49*100)+'%';
+  let pr='';
+  if(b<0.65) pr=`β = ${b.toFixed(2)}: You're under real financial pressure. Waiting has an immediate painful cost. The model pushes your reservation wage <strong>down sharply</strong> — a mediocre job now beats a great job in three weeks if you can't survive three weeks.`;
+  else if(b<0.80) pr=`β = ${b.toFixed(2)}: Some runway but not much. You can afford to wait a bit — but not indefinitely. Moderate standards, not too picky.`;
+  else if(b<0.92) pr=`β = ${b.toFixed(2)}: Reasonable position. Bills covered, some savings. You can hold out for a genuinely good offer. Your reservation wage will sit meaningfully above the average.`;
+  else pr=`β = ${b.toFixed(2)}: Real financial security. Every week of searching costs almost nothing. The model says: <strong>hold out for a great offer.</strong> Your reservation wage will be high.`;
+  document.getElementById('lev-prose').innerHTML=pr;
+}
+selectPersona(3);updateLeverage(0.90);
+
+// ═══════════════════════════════════════
+// ACT 4 SEPARATION
+// ═══════════════════════════════════════
+function updateAlphaDemo(val){
+  const a=parseFloat(val);
+  document.getElementById('alpha-demo-val').textContent=a.toFixed(2);
+  const et=a>0?Math.round(1/a):999;
+  const ts=et>200?'very long':et+' weeks';
+  let pr='';
+  if(a<0.03) pr=`α = ${a.toFixed(2)}: Near-permanent employment. Expected tenure: ${ts}. An accepted offer is essentially a life decision. Worth being very selective.`;
+  else if(a<0.12) pr=`α = ${a.toFixed(2)}: Stable but not guaranteed. Expected tenure: ${ts}. Standard search advice applies. Reasonable to hold out for a good offer.`;
+  else if(a<0.25) pr=`α = ${a.toFixed(2)}: Moderate churn. Expected tenure: ${ts}. Real chance you'll be searching again soon. This pulls your reservation wage <strong>down</strong> — holding out for perfect is harder to justify.`;
+  else pr=`α = ${a.toFixed(2)}: High-turnover work. Expected tenure: ${ts}. You'll almost certainly be searching again soon. Your reservation wage drops noticeably — getting back to earning quickly beats holding out for a great offer you'll only keep for a few weeks.`;
+  document.getElementById('alpha-prose').innerHTML=pr;
+}
+updateAlphaDemo(0.10);
+
+// ═══════════════════════════════════════
+// ACT 5 BELLMAN
+// ═══════════════════════════════════════
+const BELL=[
+  {
+    eq:`<span class="tb">v(w)</span> <span class="tm">= ?</span>`,
+    prose:`Start with the employed side. <strong>v(w)</strong> is the total discounted lifetime value of accepting a job at wage w. We don't know what it equals yet — that's what we're building.`
+  },
+  {
+    eq:`<span class="tb">v(w)</span> = <span class="tg">u(w)</span> + β·[...]`,
+    prose:`Each period you earn w and get utility <strong>u(w) = ln(w)</strong>. Then you discount whatever comes next by β. Higher β means the future counts nearly as much as right now.`
+  },
+  {
+    eq:`<span class="tb">v(w)</span> = <span class="tg">u(w)</span> + β·[ (1−α)·<span class="tb">v(w)</span> + α·<span class="tr">d</span> ]`,
+    prose:`Next period: with probability <strong>(1−α)</strong> you stay employed and get v(w) again. With probability <strong>α</strong> you get laid off and return to unemployment, where the value of being unemployed is <strong>d</strong>. We'll build d next.`
+  },
+  {
+    eq:`<span class="tb">v(w)</span> = [ <span class="tg">u(w)</span> + β·α·<span class="tr">d</span> ] / (1 − β·(1−α))`,
+    prose:`Rearranging, v(w) has a clean closed form. <strong>The denominator (1 − β·(1−α)) captures both discounting and job insecurity.</strong> Crucially: v(w) is fully determined once we know d. So the whole problem reduces to finding one number.`
+  },
+  {
+    eq:`<span class="tr">d</span> = value of being unemployed this period`,
+    prose:`Now the unemployed side. <strong>d</strong> is the expected lifetime value of being unemployed right now — collecting benefits c and receiving one random offer. It's a single scalar that summarizes your entire future as a job seeker.`
+  },
+  {
+    eq:`<span class="tr">d</span> = 𝔼[ max{ <span class="tb">v(w)</span>,  <span class="tg">u(c) + β·d</span> } ]`,
+    prose:`Each period you draw a random w and pick the better of two options: <strong>accept</strong> and get v(w), or <strong>reject</strong> and get u(c) this period plus β·d next period. The expectation averages over all possible offers. Notice d appears on both sides — it's a fixed-point equation.`
+  },
+  {
+    eq:`fixed point: &nbsp;<span class="tr">d</span> = T(<span class="tr">d</span>)  →  iterate until convergence`,
+    prose:`We solve this by starting with a guess for d, applying the update T(d), and repeating until d stops changing. This always converges. Once we have d, v(w) follows from the formula above, and w* follows from the next step.`
+  },
+  {
+    eq:`w* where: &nbsp;<span class="tb">v(w*)</span> = <span class="tg">u(c) + β·d</span>`,
+    prose:`The <strong>reservation wage w*</strong> is where accepting and rejecting are exactly equal in value. Below w*, the search value is higher — keep waiting. Above w*, the job value is higher — accept. Every parameter we've discussed feeds into this single number.`
+  }
+];
+
+let bellStep=0;
+function revealNextBell(){
+  if(bellStep>=BELL.length)return;
+  const wrap=document.getElementById('bell-steps');
+  const div=document.createElement('div');
+  div.className='bell-step';
+  div.innerHTML=`
+    <div class="bell-step-header">
+      <div class="bell-num">${String(bellStep+1).padStart(2,'0')}</div>
+      <div class="bell-eq">${BELL[bellStep].eq}</div>
+    </div>
+    <div class="bell-body"><div class="bell-prose">${BELL[bellStep].prose}</div></div>`;
+  wrap.appendChild(div);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>div.classList.add('show')));
+  bellStep++;
+  if(bellStep>=BELL.length){
+    document.getElementById('eq-btn').disabled=true;
+    document.getElementById('bell-conclusion').style.display='block';
+  }
+}
+revealNextBell();
+
+// ═══════════════════════════════════════
+// ACT 6 CHARTS
+// ═══════════════════════════════════════
+const PAD={top:12,right:16,bottom:32,left:48};
+function getCtx(id){
+  const c=document.getElementById(id);
+  const dpr=window.devicePixelRatio||1;
+  const W=c.parentElement.clientWidth-36;
+  const H=parseInt(c.getAttribute('height'));
+  c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  return{ctx,W,H};
+}
+function px(v,mn,mx,lo,hi){return lo+(v-mn)/(mx-mn)*(hi-lo);}
+
+function axes(ctx,W,H,xmn,xmx,ymn,ymx){
+  const L=PAD.left,R=W-PAD.right,T=PAD.top,B=H-PAD.bottom;
+  ctx.strokeStyle='#2e2a24';ctx.lineWidth=1;
+  ctx.font='10px "JetBrains Mono",monospace';ctx.fillStyle='#4a4540';ctx.textAlign='center';
+  ctx.beginPath();ctx.moveTo(L,B);ctx.lineTo(R,B);ctx.stroke();
+  for(let x=0;x<=100;x+=10){
+    const p=px(x,xmn,xmx,L,R);
+    ctx.beginPath();ctx.moveTo(p,B);ctx.lineTo(p,B+3);ctx.stroke();
+    ctx.fillText(x,p,B+14);
+  }
+  ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,B);ctx.stroke();ctx.textAlign='right';
+  for(let i=0;i<=4;i++){
+    const y=ymn+i*(ymx-ymn)/4,p=px(y,ymn,ymx,B,T);
+    ctx.beginPath();ctx.moveTo(L-3,p);ctx.lineTo(L,p);ctx.stroke();
+    ctx.fillText(y.toFixed(1),L-5,p+3);
+  }
+}
+function polyline(ctx,xs,ys,xmn,xmx,ymn,ymx,W,H,color,dash=[]){
+  const L=PAD.left,R=W-PAD.right,T=PAD.top,B=H-PAD.bottom;
+  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash(dash);
+  xs.forEach((x,i)=>{const p=[px(x,xmn,xmx,L,R),px(ys[i],ymn,ymx,B,T)];i===0?ctx.moveTo(...p):ctx.lineTo(...p);});
+  ctx.stroke();ctx.setLineDash([]);
+}
+function vline(ctx,x,xmn,xmx,T,B,L,R,color,lbl){
+  const p=px(x,xmn,xmx,L,R);
+  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=1.5;
+  ctx.setLineDash([4,4]);ctx.moveTo(p,T);ctx.lineTo(p,B);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=color;ctx.font='bold 10px "JetBrains Mono",monospace';ctx.textAlign='left';
+  ctx.fillText(lbl,p+3,T+12);
+}
+
+function renderVF(res){
+  const{ctx,W,H}=getCtx('chart-vf');
+  const L=PAD.left,R=W-PAD.right,T=PAD.top,B=H-PAD.bottom;
+  ctx.clearRect(0,0,W,H);
+  const{w,v,h,wStar,thr}=res;
+  const xmn=0,xmx=100,all=[...v,...h];
+  const ymn=Math.min(...all)-0.2,ymx=Math.max(...all)+0.2;
+  const pt=px(thr,ymn,ymx,B,T);
+  ctx.beginPath();ctx.strokeStyle='#302c26';ctx.lineWidth=1;
+  ctx.setLineDash([3,5]);ctx.moveTo(L,pt);ctx.lineTo(R,pt);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#3a3530';ctx.font='10px "JetBrains Mono",monospace';ctx.textAlign='right';
+  ctx.fillText('u(c)+βd',L-3,pt+3);
+  axes(ctx,W,H,xmn,xmx,ymn,ymx);
+  polyline(ctx,Array.from(w),Array.from(v),xmn,xmx,ymn,ymx,W,H,'#4a8fa8');
+  polyline(ctx,Array.from(w),Array.from(h),xmn,xmx,ymn,ymx,W,H,'#c44b3a',[6,4]);
+  vline(ctx,wStar,xmn,xmx,T,B,L,R,'#d4a843',`w*=${wStar.toFixed(1)}`);
+  ctx.fillStyle='#4a4540';ctx.font='11px "DM Sans",sans-serif';ctx.textAlign='center';
+  ctx.fillText('Wage (w)',L+(R-L)/2,H-1);
+  document.getElementById('legend-vf').innerHTML=`
+    <div class="legend-item"><div class="legend-swatch" style="background:#4a8fa8"></div>v(w) employed value</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#c44b3a"></div>h(w) search value</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#d4a843"></div>w* reservation wage</div>`;
+}
+
+function renderDist(res){
+  const{ctx,W,H}=getCtx('chart-dist');
+  const L=PAD.left,R=W-PAD.right,T=PAD.top,B=H-PAD.bottom;
+  ctx.clearRect(0,0,W,H);
+  const{wStar}=res;
+  const xs=[],ys=[];let ymx=0;
+  for(let i=0;i<=200;i++){const x=i/200*100;xs.push(x);const y=normPdf(x);ys.push(y);if(y>ymx)ymx=y;}
+  ymx*=1.15;const ymn=0,xmn=0,xmx=100;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    if(xs[i]>wStar)break;
+    const p=[px(xs[i],xmn,xmx,L,R),px(ys[i],ymn,ymx,B,T)];
+    i===0?ctx.moveTo(px(xs[i],xmn,xmx,L,R),B):ctx.lineTo(...p);
+  }
+  const ps=px(Math.min(wStar,xmx),xmn,xmx,L,R);
+  ctx.lineTo(ps,px(normPdf(Math.min(wStar,xmx)),ymn,ymx,B,T));
+  ctx.lineTo(ps,B);ctx.closePath();ctx.fillStyle='rgba(196,75,58,0.22)';ctx.fill();
+  ctx.beginPath();let started=false;
+  for(let i=0;i<=200;i++){
+    if(xs[i]<wStar)continue;
+    const p=[px(xs[i],xmn,xmx,L,R),px(ys[i],ymn,ymx,B,T)];
+    if(!started){ctx.moveTo(p[0],B);ctx.lineTo(...p);started=true;}else ctx.lineTo(...p);
+  }
+  ctx.lineTo(R,B);ctx.closePath();ctx.fillStyle='rgba(74,143,168,0.22)';ctx.fill();
+  axes(ctx,W,H,xmn,xmx,ymn,ymx);
+  polyline(ctx,xs,ys,xmn,xmx,ymn,ymx,W,H,'#5a5248');
+  vline(ctx,wStar,xmn,xmx,T,B,L,R,'#d4a843',`w*=${wStar.toFixed(1)}`);
+  const pAcc=(1-normCdf(wStar))*100;
+  ctx.fillStyle='#4a8fa8';ctx.font='bold 10px "JetBrains Mono",monospace';ctx.textAlign='center';
+  ctx.fillText(`${pAcc.toFixed(1)}% accepted`,px((wStar+xmx)/2,xmn,xmx,L,R),T+13);
+  ctx.fillStyle='#4a4540';ctx.font='11px "DM Sans",sans-serif';ctx.textAlign='center';
+  ctx.fillText('Wage (w)',L+(R-L)/2,H-1);
+  document.getElementById('legend-dist').innerHTML=`
+    <div class="legend-item"><div class="legend-swatch" style="background:rgba(74,143,168,0.5)"></div>Accepted (w ≥ w*)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:rgba(196,75,58,0.5)"></div>Rejected (w &lt; w*)</div>`;
+}
+
+function updateNarr(beta,c,alpha,wStar,meanDur){
+  const pAcc=(1-normCdf(wStar))*100;
+  const run=beta>0.92?'strong runway':beta>0.80?'moderate runway':beta>0.65?'limited runway':'very little runway';
+  const sec=alpha<0.05?'very stable':alpha<0.15?'reasonably secure':'fairly precarious';
+  document.getElementById('model-narrative').innerHTML=
+    `With <strong>β = ${beta.toFixed(2)}</strong> (${run}) and benefits <strong>c = ${c}</strong>, in <strong>${sec}</strong> work (α = ${alpha.toFixed(2)}): reject any offer below <strong style="color:#d47060">w* = ${wStar.toFixed(2)}</strong>. Only ${pAcc.toFixed(1)}% of offers will clear that bar — expect to search for <strong style="color:#6ab4d0">${meanDur.toFixed(1)} weeks</strong> on average.`;
+}
+
+let dbnc=null;
+function update(){
+  const beta=parseFloat(document.getElementById('sl-beta').value);
+  const c=parseFloat(document.getElementById('sl-c').value);
+  const alpha=parseFloat(document.getElementById('sl-alpha').value);
+  document.getElementById('val-beta').textContent=beta.toFixed(2);
+  document.getElementById('val-c').textContent=c.toFixed(0);
+  document.getElementById('val-alpha').textContent=alpha.toFixed(2);
+  clearTimeout(dbnc);
+  dbnc=setTimeout(()=>{
+    const res=solve(beta,c,alpha);
+    document.getElementById('out-wstar').textContent=res.wStar.toFixed(2);
+    document.getElementById('out-dur').textContent=res.meanDur.toFixed(1)+' wk';
+    renderVF(res);renderDist(res);
+    updateNarr(beta,c,alpha,res.wStar,res.meanDur);
+  },40);
+}
+window.addEventListener('resize',update);
+update();
+</script>
+</body>
+</html>

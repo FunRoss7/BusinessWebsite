@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ross Carlson</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Mono:ital,wght@0,400;0,500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #18120a;
+    --bg2:     #201610;
+    --bg3:     #271c10;
+    --grain:   #2e2010;
+    --carpet:  #7a1010;
+    --carpet2: #8b1a1a;
+    --gold:    #c8a030;
+    --gold-d:  #6a5010;
+    --gold-lt: #ddb84a;
+    --cream:   #f0e4cc;
+    --cream2:  #c8b090;
+    --cream3:  #7a6040;
+    --frame:   #b89040;
+  }
+
+  .site { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--cream); border-radius: 10px; overflow: hidden; }
+
+  .carpet-stripe { height: 4px; background: var(--carpet); }
+
+  nav {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 1.3rem 2.4rem; border-bottom: 1px solid var(--grain); background: var(--bg2);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 19px; color: var(--gold-lt); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 11px; color: var(--cream3); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--cream2); }
+
+  .hero {
+    padding: 4rem 2.4rem 3.5rem;
+    border-bottom: 1px solid var(--grain);
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 3rem;
+    align-items: end;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--carpet2); margin-bottom: 1.1rem;
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 50px; font-weight: 400; line-height: 1.1;
+    color: var(--cream); margin-bottom: 0.6rem;
+  }
+  .hero-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.6rem;
+  }
+  .hero-name em { font-style: italic; color: var(--gold-lt); }
+
+  .hero-bio {
+    font-size: 14px; color: var(--cream2); line-height: 1.9;
+    font-weight: 300; max-width: 420px;
+  }
+
+  .hero-aside { padding-bottom: 6px; }
+
+  .aside-note {
+    border-left: 2px solid var(--carpet2);
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.2rem;
+    background: rgba(139,26,26,0.07);
+  }
+  .aside-note:last-child { margin-bottom: 0; }
+
+  .aside-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--carpet2); margin-bottom: 0.35rem;
+  }
+
+  .aside-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px; color: var(--cream2); line-height: 1.55;
+    font-style: italic;
+  }
+
+  .divider {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.8rem 2.4rem 1rem;
+  }
+  .divider-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--carpet2); white-space: nowrap;
+  }
+  .divider-rule { flex: 1; height: 1px; background: var(--grain); }
+
+  .sections-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--grain);
+    border-bottom: 1px solid var(--grain);
+  }
+
+  .section-card {
+    padding: 2rem 1.8rem 2rem;
+    border-right: 1px solid var(--grain);
+    cursor: default;
+    transition: background 0.18s;
+  }
+  .section-card:last-child { border-right: none; }
+  .section-card:hover { background: rgba(255,255,255,0.018); }
+
+  .sc-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--gold-d);
+    margin-bottom: 0.9rem; letter-spacing: 0.06em;
+  }
+
+  .sc-frame {
+    display: inline-block;
+    border: 1px solid var(--frame);
+    padding: 0.5rem 0.9rem;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .sc-frame::before {
+    content: ''; position: absolute; inset: 3px;
+    border: 1px solid rgba(184,144,64,0.18); pointer-events: none;
+  }
+
+  .sc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 400;
+    color: var(--cream); line-height: 1.2;
+  }
+  .sc-title em { font-style: italic; color: var(--gold); }
+
+  .sc-subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--carpet2); margin-bottom: 0.9rem;
+  }
+
+  .sc-desc {
+    font-size: 13px; color: var(--cream3); line-height: 1.75;
+    font-weight: 300; margin-bottom: 1.4rem;
+  }
+
+  .sc-link {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold-d);
+    border-bottom: 1px solid var(--gold-d);
+    padding-bottom: 1px;
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sc-link:hover { color: var(--gold); border-color: var(--gold); }
+
+  .who-strip {
+    padding: 2.4rem 2.4rem 2.8rem;
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 3rem;
+    border-bottom: 1px solid var(--grain);
+    align-items: start;
+  }
+
+  .who-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 400;
+    color: var(--cream); line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .who-heading em { font-style: italic; color: var(--gold-lt); }
+
+  .who-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--cream3); line-height: 2;
+  }
+
+  .who-right {
+    font-size: 14px; color: var(--cream2); line-height: 1.9; font-weight: 300;
+  }
+
+  .who-right p + p { margin-top: 1rem; }
+
+  footer {
+    background: var(--bg2);
+    border-top: 3px solid var(--carpet);
+    padding: 1.1rem 2.4rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-sig { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: var(--cream3); }
+  .footer-links { display: flex; gap: 1.6rem; list-style: none; }
+  .footer-links a { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream3); text-decoration: none; }
+  .footer-links a:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="site">
+  <div class="carpet-stripe"></div>
+
+  <nav>
+    <span class="nav-logo">Ross Carlson</span>
+    <ul class="nav-links">
+      <li><a href="lab.html">Lab</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="record.html">Record</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Systems architect · Maryland</div>
+      <div class="hero-name">
+        I find where things fit.<br><em>Then I make them work.</em>
+      </div>
+      <div class="hero-tagline">Built to be understood</div>
+      <div class="hero-bio">
+        This site is three things: a place to share what I’ve built, a wall for work that’s stuck with me, and an account of a professional life spent inside the load-bearing parts of systems most people never see.
+        <br><br>
+        Have a look around.
+      </div>
+    </div>
+    <div class="hero-aside">
+      <div class="aside-note">
+        <div class="aside-label">On people</div>
+        <div class="aside-val">I see people. I figure out where they fit, then give them room to try something real.</div>
+      </div>
+      <div class="aside-note">
+        <div class="aside-label">On the desk right now</div>
+        <div class="aside-val">Wind-driven propulsion. A Pepsi bottle is load-bearing. Don’t ask yet.</div>
+      </div>
+      <div class="aside-note">
+        <div class="aside-label">On the office</div>
+        <div class="aside-val">Red carpet. Gold frames. Sailboats and old engineers. One thing always slightly askew.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <span class="divider-label">What’s here</span>
+    <div class="divider-rule"></div>
+  </div>
+
+  <div class="sections-grid">
+
+    <div class="section-card">
+      <div class="sc-number">01</div>
+      <div class="sc-frame">
+        <div class="sc-title">The <em>Lab</em></div>
+      </div>
+      <div class="sc-subtitle">Interactive tools & exhibits</div>
+      <div class="sc-desc">
+        Things I’ve built that you can use. Economic simulations, decision models, technical toys. Not demos — they work. Start with the McCall job search game if you want to see how economists think about turning down offers.
+      </div>
+      <a class="sc-link" href="lab.html">Enter the lab ›</a>
+    </div>
+
+    <div class="section-card">
+      <div class="sc-number">02</div>
+      <div class="sc-frame">
+        <div class="sc-title">The <em>Gallery</em></div>
+      </div>
+      <div class="sc-subtitle">Curated work, framed with commentary</div>
+      <div class="sc-desc">
+        Other people’s work that earned a place on the wall. Talks, lectures, ideas I’ve come back to more than once. Each one gets a short note: what it is, why it stuck, and what I think is really going on underneath.
+      </div>
+      <a class="sc-link" href="gallery.html">Browse the gallery ›</a>
+    </div>
+
+    <div class="section-card">
+      <div class="sc-number">03</div>
+      <div class="sc-frame">
+        <div class="sc-title">The <em>Record</em></div>
+      </div>
+      <div class="sc-subtitle">Professional life, without the rigid form</div>
+      <div class="sc-desc">
+        Not a résumé. An account. What I’ve built, what I was responsible for, and how I think about systems and people. Written in the first person, because that’s the only honest way to describe work you were actually inside of.
+      </div>
+      <a class="sc-link" href="record.html">Read the record ›</a>
+    </div>
+
+  </div>
+
+  <div class="who-strip">
+    <div class="who-left">
+      <div class="who-heading">Who I <em>am,</em><br>briefly.</div>
+      <div class="who-meta">
+        Systems architect<br>
+        Builder<br>
+        Maryland<br>
+        Suspenders<br>
+      </div>
+    </div>
+    <div class="who-right">
+      <p>I’ve spent most of my professional life in the foundational parts of systems — the parts that, if they go wrong, everything goes wrong. I’m not a manager by disposition. I’m a builder who occasionally gets to decide what gets built.</p>
+      <p>Outside of work I think about boats, physics, and whether a 2-liter Pepsi bottle can serve as a bearing housing. My house is painted orange. The furniture is dark walnut. It coheres, I promise.</p>
+      <p>I built this site because I tend to accumulate things — ideas, tools, references, experiences — and it seemed better to put them somewhere than to keep them in a pile. If something here is useful to you, I’m glad. If you want to talk, find me.</p>
+    </div>
+  </div>
+
+  <footer>
+    <span class="footer-sig">Built to be understood.</span>
+    <ul class="footer-links">
+      <li><a href="https://github.com/FunRoss7/">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/ross-carlson-bsaae/">LinkedIn</a></li>
+      <li><a href="#">RSS</a></li>
+    </ul>
+  </footer>
+</div>
+
+</body>
+</html>
+
