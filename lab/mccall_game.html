@@ -120,18 +120,20 @@
         <div class="cps-bar-track"><div class="cps-bar-fill" id="cps-bar" style="width:0%"></div></div>
         <div class="cps-val"><span id="cps-display">0.0</span> /s</div>
       </div>
-      <div class="exhaustion" id="exhaustion">You're at human limits. Another click buys almost nothing new.</div>
+      <div class="exhaustion" id="exhaustion">You've hit the ceiling. No amount of effort gets you higher — you'd need something working for you while you sleep.</div>
       <button class="click-btn" id="click-btn" onclick="handleClick()">
         <span class="click-cps-big" id="click-cps-big">0.0</span>
         <span class="click-sub">clicks / sec</span>
       </button>
     </div>
     <div class="needs-ladder">
-      <div class="need-row" id="need-0"><div class="need-icon">🍞</div><div class="need-body"><div class="need-name">Food</div><div class="need-desc">Enough to eat today. Hunger gone.</div></div><div class="need-thresh">≥ 0.5/s</div></div>
-      <div class="need-row" id="need-1"><div class="need-icon">🏥</div><div class="need-body"><div class="need-name">Safety &amp; Healthcare</div><div class="need-desc">A doctor when you need one. Basic security.</div></div><div class="need-thresh">≥ 1.5/s</div></div>
-      <div class="need-row" id="need-2"><div class="need-icon">🏠</div><div class="need-body"><div class="need-name">Shelter</div><div class="need-desc">Stable housing. Not worrying about rent.</div></div><div class="need-thresh">≥ 3.0/s</div></div>
-      <div class="need-row" id="need-3"><div class="need-icon">🚗</div><div class="need-body"><div class="need-name">Transportation</div><div class="need-desc">A reliable car. Getting to work without stress.</div></div><div class="need-thresh">≥ 5.5/s</div></div>
-      <div class="need-row" id="need-4"><div class="need-icon">🛋️</div><div class="need-body"><div class="need-name">Comfort</div><div class="need-desc">Business class. Nice apartment. Small luxuries.</div></div><div class="need-thresh">≥ 9.0/s</div></div>
+      <div class="need-row" id="need-0"><div class="need-icon">🍕</div><div class="need-body"><div class="need-name">Pizza night</div><div class="need-desc">Ordering without checking the price. No guilt.</div></div><div class="need-thresh">≥ 1/s</div></div>
+      <div class="need-row" id="need-1"><div class="need-icon">🍽️</div><div class="need-body"><div class="need-name">Dinner out</div><div class="need-desc">A real restaurant. You don't look at the right side of the menu.</div></div><div class="need-thresh">≥ 2.5/s</div></div>
+      <div class="need-row" id="need-2"><div class="need-icon">🏨</div><div class="need-body"><div class="need-name">Weekend away</div><div class="need-desc">A hotel that doesn't make you nervous to touch things.</div></div><div class="need-thresh">≥ 4/s</div></div>
+      <div class="need-row" id="need-3"><div class="need-icon">📦</div><div class="need-body"><div class="need-name">Hired movers</div><div class="need-desc">Someone else carries the couch. Worth every dollar.</div></div><div class="need-thresh">≥ 5.5/s</div></div>
+      <div class="need-row" id="need-4"><div class="need-icon">🧹</div><div class="need-body"><div class="need-name">Housekeeper</div><div class="need-desc">Every two weeks. You come home to clean floors.</div></div><div class="need-thresh">≥ 7/s</div></div>
+      <div class="need-row" id="need-5"><div class="need-icon">✈️</div><div class="need-body"><div class="need-name">First class</div><div class="need-desc">Lie-flat seat. Real food. You arrive rested.</div></div><div class="need-thresh">≥ 9/s</div></div>
+      <div class="need-row" id="need-6"><div class="need-icon">🛥️</div><div class="need-body"><div class="need-name">Private yacht</div><div class="need-desc">You don't fly commercial. You don't wait. You just go.</div></div><div class="need-thresh">≥ 11/s</div></div>
     </div>
   </div>
 
@@ -658,7 +660,7 @@ showTutPhase(0);
 // ACT 2 CLICKER
 // ═══════════════════════════════════════
 let clickTimes=[];
-const NTH=[0.5,1.5,3.0,5.5,9.0];
+const NTH=[1,2.5,4,5.5,7,9,11];
 function handleClick(){
   clickTimes.push(Date.now());
   document.getElementById('click-btn').style.transform='scale(0.91)';
@@ -671,9 +673,9 @@ function refreshCPS(){
   const cps=clickTimes.length;
   document.getElementById('cps-display').textContent=cps.toFixed(1);
   document.getElementById('click-cps-big').textContent=cps.toFixed(1);
-  document.getElementById('cps-bar').style.width=Math.min(cps/12*100,100)+'%';
+  document.getElementById('cps-bar').style.width=Math.min(cps/14*100,100)+'%';
   NTH.forEach((th,i)=>document.getElementById('need-'+i).classList.toggle('unlocked',cps>=th));
-  document.getElementById('exhaustion').classList.toggle('show',cps>=8);
+  document.getElementById('exhaustion').classList.toggle('show',cps>=9);
 }
 setInterval(()=>{clickTimes=clickTimes.filter(t=>Date.now()-t<=1000);refreshCPS();},200);
 
