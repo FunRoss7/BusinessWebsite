@@ -101,7 +101,7 @@
       <div class="reveal-stats" id="reveal-stats"></div>
       <div class="reveal-narrative" id="reveal-narrative"></div>
     </div>
-    <p style="margin-top:20px">Random luck accounts for most of the variation. The model's job is to find the single best rule given that uncertainty. Before we get there, two building blocks.</p>
+    <p style="margin-top:20px">Random luck accounts for most of the variation. The model's job is to find the single best rule given that uncertainty.</p>
     <button id="reset-btn" class="eq-next-btn" onclick="resetGame()" style="display:none;margin-top:16px">Play again →</button>
   </div>
 </div>
@@ -110,7 +110,9 @@
 <div class="act" id="act2">
   <div class="act-label">Act II · Utility</div>
   <h2>Money doesn't go<br>as far as you think.<br><em>Feel it.</em></h2>
-  <p>Click as fast as you can. Your clicks per second are your wage. Watch what each burst actually buys you.</p>
+  <p>The last game treated every dollar equally — a $50 offer twice as good as a $25 one. But that's not how people actually experience money. The difference between $0 and $25 feels nothing like the difference between $975 and $1,000.</p>
+  <p>Before the math can work properly, we need a better model of what a dollar is actually worth.</p>
+  <p>This next game will show you what we mean. It's a clicker — your clicks per second represent your wage. Click faster and you can afford more, but you'll notice the value of each new luxury tapers off. At some point it just takes too much effort to sustain, and the extra income buys you almost nothing new.</p>
 
   <div class="card">
     <div class="clicker-arena">
@@ -133,7 +135,21 @@
     </div>
   </div>
 
-  <p>Economists write this as <strong>u(w) = ln(w)</strong>. The logarithm compresses large numbers — exactly like your clicking did. The jump from $1 to $10 is enormous. The jump from $1,000 to $1,010 is nearly invisible. This is why a worker at $20/hr will quit for $25 but a worker at $90/hr won't bother.</p>
+  <p>Economists capture this effect by converting dollars into an abstract concept called <strong>utility</strong> — a measure of satisfaction rather than raw income. And because each additional dollar buys less and less satisfaction, they reach for the logarithm: <strong>u(w) = ln(w)</strong>. The log function grows quickly at first and slowly thereafter, embodying exactly the diminishing returns you just felt. The jump from $1 to $10 is enormous. The jump from $1,000 to $1,010 is nearly invisible. This is why a worker at $20/hr will quit for $25 but a worker at $90/hr won't bother.</p>
+</div>
+
+<!-- STUB: URGENCY -->
+<div class="act" id="act-urgency">
+  <div class="act-label">Coming soon · Urgency</div>
+  <h2>What if you need the<br>money <em>now?</em></h2>
+  <p>The model assumed you could afford to wait indefinitely. But most people can't. Rent is due, savings run dry, and the pressure to accept something — anything — builds with every passing week. This act will explore how urgency reshapes the search: what changes when waiting itself has a cost beyond lost benefits.</p>
+</div>
+
+<!-- STUB: JOB SECURITY -->
+<div class="act" id="act-security">
+  <div class="act-label">Coming soon · Job Security</div>
+  <h2>What if the job<br>doesn't <em>last?</em></h2>
+  <p>Accepting an offer doesn't mean you're set forever. Jobs end — layoffs, closures, contracts that run out. When there's a real chance of ending up back on the market, the value of any accepted wage has to be discounted by that risk. This act will show how job insecurity changes what you should be willing to accept.</p>
 </div>
 
 <!-- ACT 3 -->
