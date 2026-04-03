@@ -55,6 +55,10 @@
     <div class="reveal-narrative" id="tut-narrative" style="display:none;margin-top:16px"></div>
   </div>
 
+  <div style="text-align:right;margin-top:8px">
+    <button onclick="startRealGame()" style="background:none;border:none;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;padding:4px 0">skip tutorial →</button>
+  </div>
+
   <!-- Real game card -->
   <div class="card" id="search-card" style="display:none">
     <div class="offer-week" id="offer-week" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Week 1</div>
@@ -83,7 +87,7 @@
     <div class="table-legend">
       <div class="tleg"><div class="tleg-sw" style="background:rgba(212,168,67,0.25)"></div>Your row</div>
       <div class="tleg"><div class="tleg-sw" style="background:rgba(90,158,111,0.25)"></div>Best total income</div>
-      <div class="tleg"><div class="tleg-sw" style="background:#4a8fa8"></div>Employed income</div>
+      <div class="tleg"><div class="tleg-sw" style="background:#5a8090"></div>Employed income</div>
       <div class="tleg"><div class="tleg-sw" style="background:#7a7060"></div>Unemployment benefit</div>
     </div>
   </div>
@@ -98,6 +102,7 @@
       <div class="reveal-narrative" id="reveal-narrative"></div>
     </div>
     <p style="margin-top:20px">Random luck accounts for most of the variation. The model's job is to find the single best rule given that uncertainty. Before we get there, two building blocks.</p>
+    <button id="reset-btn" class="eq-next-btn" onclick="resetGame()" style="display:none;margin-top:16px">Play again →</button>
   </div>
 </div>
 
@@ -443,7 +448,7 @@ function showTutPhase(i){
       bodyHTML+=`<td class="row-label" style="${youCellBg}color:${isUser?'var(--gold)':'var(--muted)'}">${takenBy}</td>`;
       periods.forEach((inc,j)=>{
         const earned=(j>=i);
-        bodyHTML+=`<td style="color:${earned?'var(--blue)':'var(--muted)'}">$${inc.toFixed(0)}</td>`;
+        bodyHTML+=`<td style="color:${earned?'#5a8090':'var(--muted)'}">$${inc.toFixed(0)}</td>`;
       });
       bodyHTML+=`<td style="color:var(--ink);font-weight:500">$${total.toFixed(0)}</td>`;
       bodyHTML+=`</tr>`;
@@ -456,7 +461,7 @@ function showTutPhase(i){
       <div class="table-legend" style="margin-top:8px">
         <div class="tleg"><div class="tleg-sw" style="background:rgba(212,168,67,0.25)"></div>Your row</div>
         <div class="tleg"><div class="tleg-sw" style="background:rgba(90,158,111,0.25)"></div>Best total income</div>
-        <div class="tleg"><div class="tleg-sw" style="background:#4a8fa8"></div>Employed income</div>
+        <div class="tleg"><div class="tleg-sw" style="background:#5a8090"></div>Employed income</div>
         <div class="tleg"><div class="tleg-sw" style="background:#7a7060"></div>Unemployment benefit</div>
       </div>`;
     narr.innerHTML=step.narrative+tableHTML+`<br><br><button class="eq-next-btn" onclick="startRealGame()">Start the real game →</button>`;
@@ -514,7 +519,7 @@ function addTableRow(i, takenBy){
   row+=`<td id="tby-${i}" class="row-label" style="color:${isUser?'var(--gold)':'var(--muted)'}">${isPending?'—':takenBy}</td>`;
   for(let j=0;j<N_ROUNDS;j++){
     const employed=(j>=i);
-    row+=`<td style="color:${employed?'var(--blue)':'var(--muted)'}">$${(employed?offer:C_A1).toFixed(0)}</td>`;
+    row+=`<td style="color:${employed?'#5a8090':'var(--muted)'}">$${(employed?offer:C_A1).toFixed(0)}</td>`;
   }
   row+=`<td style="color:var(--ink);font-weight:500">$${total.toFixed(0)}</td></tr>`;
   document.getElementById('offer-table').insertAdjacentHTML('beforeend',row);
@@ -538,12 +543,13 @@ function applyTableHighlights(){
     const isBest=(totals[i]===bestTotal);
     const both=isUser&&isBest;
     if(both){
-      row.style.background='rgba(90,158,111,0.07)';
-      document.getElementById(`tby-${i}`).style.background='rgba(212,168,67,0.25)';
+      row.style.background='rgba(90,158,111,0.18)';
+      document.getElementById(`tby-${i}`).style.background='rgba(212,168,67,0.45)';
+      document.getElementById(`tby-${i}`).style.color='var(--gold)';
     } else if(isUser){
-      row.style.background='rgba(212,168,67,0.07)';
+      row.style.background='rgba(212,168,67,0.18)';
     } else if(isBest){
-      row.style.background='rgba(90,158,111,0.07)';
+      row.style.background='rgba(90,158,111,0.18)';
     }
   });
 }
@@ -615,9 +621,19 @@ function onAllRowsDone(){
   else if(diff>0) prose+=`You accepted $${userOffer.toFixed(1)}, above the optimal threshold. Solid result.`;
   else prose+=`You accepted $${userOffer.toFixed(1)}, below the optimal threshold. The model says you settled a bit early.`;
   document.getElementById('reveal-narrative').innerHTML=prose;
+  document.getElementById('reset-btn').style.display='inline-block';
   const rev=document.getElementById('timeline-reveal');
   rev.style.display='block';
   rev.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function resetGame(){
+  document.getElementById('reset-btn').style.display='none';
+  document.getElementById('offer-table').innerHTML='';
+  document.getElementById('live-table-wrap').style.display='none';
+  document.getElementById('timeline-reveal').style.display='none';
+  document.getElementById('search-card').scrollIntoView({behavior:'smooth',block:'start'});
+  initRealGame();
 }
 
 showTutPhase(0);
