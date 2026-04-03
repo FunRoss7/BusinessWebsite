@@ -80,13 +80,14 @@
   <div id="timeline-reveal" style="display:none">
     <div class="divider"></div>
     <h2>Here's what <em>actually happened.</em></h2>
-    <p>The table shows every offer across your search and 19 simulated agents. Each cell is the wage offered that week. The row below each agent shows what their <strong>lifetime earnings</strong> would have been had they accepted at that moment (assuming β = 0.9).</p>
-    <p><span style="color:var(--gold)">Gold</span> = best offer that agent ever saw. <span style="color:var(--green)">Green</span> = what was actually accepted.</p>
+    <p>Every offer from your search is shown below. Each one was taken by someone — you or an agent who happened to be searching that week. The income columns show what each person earned every period after accepting.</p>
 
     <div class="table-wrap"><table id="offer-table"></table></div>
     <div class="table-legend">
-      <div class="tleg"><div class="tleg-sw" style="background:rgba(212,168,67,0.25)"></div>Best offer seen</div>
-      <div class="tleg"><div class="tleg-sw" style="background:rgba(90,158,111,0.25)"></div>Accepted offer</div>
+      <div class="tleg"><div class="tleg-sw" style="background:rgba(212,168,67,0.25)"></div>Your row</div>
+      <div class="tleg"><div class="tleg-sw" style="background:rgba(90,158,111,0.25)"></div>Best total income</div>
+      <div class="tleg"><div class="tleg-sw" style="background:#4a8fa8"></div>Employed income</div>
+      <div class="tleg"><div class="tleg-sw" style="background:#7a7060"></div>Unemployment benefit</div>
     </div>
 
     <div class="card" style="margin-top:20px">
@@ -369,6 +370,7 @@ function solve(beta,c,alpha,tol=1e-6){
 // ACT 1
 // ═══════════════════════════════════════
 const BETA_A1=0.9,C_A1=10;
+let N_ROUNDS=20; // default number of offers per game
 
 // ── Tutorial ──────────────────────────────
 const TUT_OFFER_LOW    = 11;   // forced-decline offer
@@ -478,120 +480,109 @@ function startRealGame(){
   document.getElementById('tutorial-card').style.display='none';
   document.getElementById('search-card').style.display='block';
   document.getElementById('reject-num').textContent=`$${C_A1}`;
-  nextOffer();
+  initRealGame();
 }
-
-let s1={week:0,offers:[],benefitsTotal:0,currentOffer:null};
 
 function drawW(){return Math.max(0.1,Math.round(normRandom(WAGE_MU,WAGE_SIGMA)*10)/10);}
 
+let s1={currentIdx:0,allOffers:[],acceptedIdx:null,benefitsTotal:0};
+
+function initRealGame(){
+  s1={currentIdx:0,allOffers:[],acceptedIdx:null,benefitsTotal:0};
+  for(let i=0;i<N_ROUNDS;i++) s1.allOffers.push(drawW());
+  document.getElementById('btn-accept').disabled=false;
+  document.getElementById('btn-reject').disabled=false;
+  document.getElementById('timeline-reveal').style.display='none';
+  nextOffer();
+}
+
 function nextOffer(){
-  s1.week++;s1.currentOffer=drawW();
+  if(s1.currentIdx>=N_ROUNDS){
+    // ran out of offers — force accept last
+    s1.acceptedIdx=N_ROUNDS-1;
+    document.getElementById('btn-accept').disabled=true;
+    document.getElementById('btn-reject').disabled=true;
+    buildReveal();return;
+  }
+  s1.currentOffer=s1.allOffers[s1.currentIdx];
   const el=document.getElementById('offer-number');
   el.textContent='$'+s1.currentOffer.toFixed(1);
   el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
-  document.getElementById('offer-week').textContent='Week '+s1.week;
-  document.getElementById('weeks-count').textContent=s1.week;
+  document.getElementById('offer-week').textContent='Week '+(s1.currentIdx+1)+' of '+N_ROUNDS;
+  document.getElementById('weeks-count').textContent=s1.currentIdx+1;
   document.getElementById('benefits-total').textContent='$'+s1.benefitsTotal;
-  const allW=[...s1.offers.map(o=>o.w),s1.currentOffer];
-  document.getElementById('best-seen').textContent='$'+Math.max(...allW).toFixed(1);
+  const bestSoFar=Math.max(...s1.allOffers.slice(0,s1.currentIdx+1));
+  document.getElementById('best-seen').textContent='$'+bestSoFar.toFixed(1);
 }
 
 function rejectOffer(){
-  s1.offers.push({w:s1.currentOffer,accepted:false});
-  s1.benefitsTotal+=C_A1;nextOffer();
+  s1.benefitsTotal+=C_A1;
+  s1.currentIdx++;
+  nextOffer();
 }
 
 function acceptOffer(){
-  s1.offers.push({w:s1.currentOffer,accepted:true});
+  s1.acceptedIdx=s1.currentIdx;
   document.getElementById('btn-accept').disabled=true;
   document.getElementById('btn-reject').disabled=true;
   buildReveal();
 }
 
-function lifetimeVal(wage){return Math.round(wage/(1-BETA_A1));}
-
 function buildReveal(){
-  const res=solve(BETA_A1,C_A1,0.10);
-  const wStar=res.wStar;
-  const N_AGENTS=19;
-  const userOffers=s1.offers.map(o=>o.w);
-  const userAccepted=s1.offers.find(o=>o.accepted);
-  const nWeeks=userOffers.length;
+  const P=N_ROUNDS; // periods = rounds for direct comparison
+  const acceptIdx=s1.acceptedIdx;
 
-  // simulate agents — each searches until w>=wStar or same number of weeks as user
-  const agents=[];
-  for(let a=0;a<N_AGENTS;a++){
-    const hist=[];let accepted=null;
-    for(let t=0;t<Math.max(nWeeks,10);t++){
-      const w=drawW();hist.push(w);
-      if(w>=wStar&&!accepted){accepted={w,t};break;}
+  // period income for row i: C_A1 for j<i, offer for j>=i
+  const totals=s1.allOffers.map((w,i)=>i*C_A1+(P-i)*w);
+  const bestTotal=Math.max(...totals);
+
+  // header
+  let html=`<tr><th class="row-label">Offer</th><th class="row-label">Taken by</th>`;
+  for(let p=1;p<=P;p++) html+=`<th>P${p}</th>`;
+  html+=`<th>Total</th></tr>`;
+
+  let agentN=1;
+  s1.allOffers.forEach((offer,i)=>{
+    const isUser=(i===acceptIdx);
+    const isBestTotal=(totals[i]===bestTotal);
+    const both=isUser&&isBestTotal;
+    const takenBy=isUser?'▶ You':`Agent ${agentN++}`;
+    const total=totals[i];
+
+    const rowBg=(isUser&&!both)?'background:rgba(212,168,67,0.07)':isBestTotal?'background:rgba(90,158,111,0.07)':'';
+    const youCellBg=both?'background:rgba(212,168,67,0.25);':'';
+
+    html+=`<tr style="${rowBg}">`;
+    html+=`<td class="row-label" style="color:var(--muted)">$${offer.toFixed(1)}</td>`;
+    html+=`<td class="row-label" style="${youCellBg}color:${isUser?'var(--gold)':'var(--muted)'}">${takenBy}</td>`;
+    for(let j=0;j<P;j++){
+      const employed=(j>=i);
+      const inc=employed?offer:C_A1;
+      html+=`<td style="color:${employed?'var(--blue)':'var(--muted)'}">$${inc.toFixed(0)}</td>`;
     }
-    if(!accepted){
-      // didn't find w>=wStar in time; accept best seen
-      const bestIdx=hist.reduce((bi,w,i)=>w>hist[bi]?i:bi,0);
-      accepted={w:hist[bestIdx],t:bestIdx};
-    }
-    agents.push({hist,accepted});
-  }
+    html+=`<td style="color:var(--ink);font-weight:500">$${total.toFixed(0)}</td></tr>`;
+  });
 
-  const colCount=Math.max(nWeeks,...agents.map(a=>a.hist.length));
-  const tbl=document.getElementById('offer-table');
-  tbl.innerHTML='';
-
-  // header row
-  let hr=`<tr><th class="row-label">Agent</th>`;
-  for(let t=1;t<=colCount;t++)hr+=`<th>Wk ${t}</th>`;
-  hr+=`<th>Accepted</th><th>Lifetime $</th></tr>`;
-  tbl.insertAdjacentHTML('beforeend',hr);
-
-  function agentRows(label,hist,accepted,isUser){
-    const bestW=Math.max(...hist);
-    let r=`<tr><td class="row-label" style="${isUser?'color:var(--green)':''}">${label}</td>`;
-    for(let t=0;t<colCount;t++){
-      const w=hist[t];
-      if(w===undefined){r+='<td></td>';continue;}
-      const isAcc=(t===accepted.t&&w===accepted.w);
-      const isBest=(w===bestW);
-      let cls='';
-      if(isAcc&&isBest)cls='cell-user-best';
-      else if(isAcc)cls='cell-user';
-      else if(isBest)cls='cell-best';
-      r+=`<td class="${cls}">${w.toFixed(1)}</td>`;
-    }
-    r+=`<td class="cell-user">$${accepted.w.toFixed(1)}</td><td style="color:#5a7060;font-size:10px">$${lifetimeVal(accepted.w).toLocaleString()}</td></tr>`;
-    // earnings sub-row
-    r+=`<tr><td class="row-label sub-row">if accepted →</td>`;
-    for(let t=0;t<colCount;t++){
-      const w=hist[t];
-      r+=w===undefined?`<td></td>`:`<td class="sub-row">$${lifetimeVal(w).toLocaleString()}</td>`;
-    }
-    r+=`<td></td><td></td></tr>`;
-    return r;
-  }
-
-  // user first
-  tbl.insertAdjacentHTML('beforeend', agentRows('▶ You', userOffers, userAccepted, true));
-  // separator
-  tbl.insertAdjacentHTML('beforeend',`<tr><td colspan="${colCount+3}" style="height:6px;background:#111009;border:none"></td></tr>`);
-  // agents
-  agents.forEach((ag,i)=>tbl.insertAdjacentHTML('beforeend', agentRows(`Agent ${i+1}`, ag.hist, ag.accepted, false)));
+  document.getElementById('offer-table').innerHTML=html;
 
   // stats
-  const allAccW=[userAccepted.w,...agents.map(a=>a.accepted.w)];
-  const avg=allAccW.reduce((a,b)=>a+b,0)/allAccW.length;
-  const rank=allAccW.filter(w=>w<userAccepted.w).length+1;
-  const pct=Math.round(rank/allAccW.length*100);
+  const userTotal=totals[acceptIdx];
+  const userOffer=s1.allOffers[acceptIdx];
+  const avgTotal=totals.reduce((a,b)=>a+b,0)/totals.length;
+  const rank=totals.filter(t=>t<userTotal).length+1;
+  const pct=Math.round(rank/totals.length*100);
   document.getElementById('reveal-stats').innerHTML=`
-    <div class="rstat neutral"><div class="rstat-val">$${userAccepted.w.toFixed(1)}</div><div class="rstat-lbl">Your wage<br>Week ${nWeeks}</div></div>
-    <div class="rstat ${userAccepted.w>=avg?'good':'bad'}"><div class="rstat-val">$${avg.toFixed(1)}</div><div class="rstat-lbl">Average across<br>all 20 agents</div></div>
-    <div class="rstat ${pct>=50?'good':'bad'}"><div class="rstat-val">${pct}th</div><div class="rstat-lbl">Your percentile<br>among agents</div></div>`;
+    <div class="rstat neutral"><div class="rstat-val">$${userOffer.toFixed(1)}</div><div class="rstat-lbl">Your wage<br>Week ${acceptIdx+1}</div></div>
+    <div class="rstat ${userTotal>=avgTotal?'good':'bad'}"><div class="rstat-val">$${Math.round(avgTotal).toLocaleString()}</div><div class="rstat-lbl">Avg total income<br>all agents</div></div>
+    <div class="rstat ${pct>=50?'good':'bad'}"><div class="rstat-val">${pct}th</div><div class="rstat-lbl">Your percentile<br>total income</div></div>`;
 
-  const diff=userAccepted.w-wStar;
+  const res=solve(BETA_A1,C_A1,0.10);
+  const wStar=res.wStar;
+  const diff=userOffer-wStar;
   let prose=`The optimal reservation wage for these parameters is <strong>$${wStar.toFixed(1)}</strong>. `;
-  if(Math.abs(diff)<2) prose+=`You accepted $${userAccepted.w.toFixed(1)} — essentially optimal. The model would have done almost the same thing.`;
-  else if(diff>0) prose+=`You accepted $${userAccepted.w.toFixed(1)}, above the optimal threshold. Solid result — though you could have accepted a little earlier without much loss.`;
-  else prose+=`You accepted $${userAccepted.w.toFixed(1)}, below the optimal threshold of $${wStar.toFixed(1)}. The model says you settled a bit early. A few more weeks of searching would have paid off in expectation.`;
+  if(Math.abs(diff)<2) prose+=`You accepted $${userOffer.toFixed(1)} — essentially optimal. The model would have done almost the same thing.`;
+  else if(diff>0) prose+=`You accepted $${userOffer.toFixed(1)}, above the optimal threshold. Solid result — though you could have accepted a little earlier without much loss.`;
+  else prose+=`You accepted $${userOffer.toFixed(1)}, below the optimal threshold of $${wStar.toFixed(1)}. The model says you settled a bit early. A few more weeks of searching would have paid off in expectation.`;
   document.getElementById('reveal-narrative').innerHTML=prose;
 
   const rev=document.getElementById('timeline-reveal');
