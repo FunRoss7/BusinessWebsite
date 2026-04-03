@@ -77,11 +77,8 @@
     </div>
   </div>
 
-  <div id="timeline-reveal" style="display:none">
-    <div class="divider"></div>
-    <h2>Here's what <em>actually happened.</em></h2>
-    <p>Every offer from your search is shown below. Each one was taken by someone — you or an agent who happened to be searching that week. The income columns show what each person earned every period after accepting.</p>
-
+  <!-- Live table — visible during play -->
+  <div id="live-table-wrap" style="display:none;margin-top:20px">
     <div class="table-wrap"><table id="offer-table"></table></div>
     <div class="table-legend">
       <div class="tleg"><div class="tleg-sw" style="background:rgba(212,168,67,0.25)"></div>Your row</div>
@@ -89,13 +86,18 @@
       <div class="tleg"><div class="tleg-sw" style="background:#4a8fa8"></div>Employed income</div>
       <div class="tleg"><div class="tleg-sw" style="background:#7a7060"></div>Unemployment benefit</div>
     </div>
+  </div>
 
+  <!-- Stats — shown after all rows are in -->
+  <div id="timeline-reveal" style="display:none">
+    <div class="divider"></div>
+    <h2>Here's what <em>actually happened.</em></h2>
+    <p>Every offer was taken by someone. The income columns show what each person earned every period. Notice the spread — identical rules, completely different outcomes.</p>
     <div class="card" style="margin-top:20px">
       <div class="reveal-stats" id="reveal-stats"></div>
       <div class="reveal-narrative" id="reveal-narrative"></div>
     </div>
-
-    <p style="margin-top:20px">Notice the spread: <strong>identical rules, completely different outcomes.</strong> Random luck accounts for most of the variation. The model's job is to find the single best rule given that uncertainty. Before we get there, two building blocks.</p>
+    <p style="margin-top:20px">Random luck accounts for most of the variation. The model's job is to find the single best rule given that uncertainty. Before we get there, two building blocks.</p>
   </div>
 </div>
 
@@ -485,24 +487,74 @@ function startRealGame(){
 
 function drawW(){return Math.max(0.1,Math.round(normRandom(WAGE_MU,WAGE_SIGMA)*10)/10);}
 
-let s1={currentIdx:0,allOffers:[],acceptedIdx:null,benefitsTotal:0};
+let s1={currentIdx:0,allOffers:[],acceptedIdx:null,benefitsTotal:0,agentN:1};
 
 function initRealGame(){
-  s1={currentIdx:0,allOffers:[],acceptedIdx:null,benefitsTotal:0};
+  s1={currentIdx:0,allOffers:[],acceptedIdx:null,benefitsTotal:0,agentN:1};
   for(let i=0;i<N_ROUNDS;i++) s1.allOffers.push(drawW());
   document.getElementById('btn-accept').disabled=false;
   document.getElementById('btn-reject').disabled=false;
   document.getElementById('timeline-reveal').style.display='none';
+  document.getElementById('live-table-wrap').style.display='none';
+  // build table header
+  let hdr=`<tr><th class="row-label">Offer</th><th class="row-label">Taken by</th>`;
+  for(let p=1;p<=N_ROUNDS;p++) hdr+=`<th>P${p}</th>`;
+  hdr+=`<th>Total</th></tr>`;
+  document.getElementById('offer-table').innerHTML=hdr;
   nextOffer();
+}
+
+function addTableRow(i, takenBy){
+  const offer=s1.allOffers[i];
+  const total=i*C_A1+(N_ROUNDS-i)*offer;
+  const isPending=(takenBy===null);
+  const isUser=(takenBy==='▶ You');
+  let row=`<tr id="trow-${i}">`;
+  row+=`<td class="row-label" style="color:var(--muted)">$${offer.toFixed(1)}</td>`;
+  row+=`<td id="tby-${i}" class="row-label" style="color:${isUser?'var(--gold)':'var(--muted)'}">${isPending?'—':takenBy}</td>`;
+  for(let j=0;j<N_ROUNDS;j++){
+    const employed=(j>=i);
+    row+=`<td style="color:${employed?'var(--blue)':'var(--muted)'}">$${(employed?offer:C_A1).toFixed(0)}</td>`;
+  }
+  row+=`<td style="color:var(--ink);font-weight:500">$${total.toFixed(0)}</td></tr>`;
+  document.getElementById('offer-table').insertAdjacentHTML('beforeend',row);
+  document.getElementById('live-table-wrap').style.display='block';
+}
+
+function setTableRowTakenBy(i, takenBy){
+  const cell=document.getElementById(`tby-${i}`);
+  if(!cell) return;
+  cell.textContent=takenBy;
+  cell.style.color=(takenBy==='▶ You')?'var(--gold)':'var(--muted)';
+}
+
+function applyTableHighlights(){
+  const totals=s1.allOffers.map((w,i)=>i*C_A1+(N_ROUNDS-i)*w);
+  const bestTotal=Math.max(...totals);
+  s1.allOffers.forEach((_,i)=>{
+    const row=document.getElementById(`trow-${i}`);
+    if(!row) return;
+    const isUser=(i===s1.acceptedIdx);
+    const isBest=(totals[i]===bestTotal);
+    const both=isUser&&isBest;
+    if(both){
+      row.style.background='rgba(90,158,111,0.07)';
+      document.getElementById(`tby-${i}`).style.background='rgba(212,168,67,0.25)';
+    } else if(isUser){
+      row.style.background='rgba(212,168,67,0.07)';
+    } else if(isBest){
+      row.style.background='rgba(90,158,111,0.07)';
+    }
+  });
 }
 
 function nextOffer(){
   if(s1.currentIdx>=N_ROUNDS){
-    // ran out of offers — force accept last
     s1.acceptedIdx=N_ROUNDS-1;
+    setTableRowTakenBy(N_ROUNDS-1,'▶ You');
     document.getElementById('btn-accept').disabled=true;
     document.getElementById('btn-reject').disabled=true;
-    buildReveal();return;
+    onAllRowsDone();return;
   }
   s1.currentOffer=s1.allOffers[s1.currentIdx];
   const el=document.getElementById('offer-number');
@@ -513,9 +565,11 @@ function nextOffer(){
   document.getElementById('benefits-total').textContent='$'+s1.benefitsTotal;
   const bestSoFar=Math.max(...s1.allOffers.slice(0,s1.currentIdx+1));
   document.getElementById('best-seen').textContent='$'+bestSoFar.toFixed(1);
+  addTableRow(s1.currentIdx, null); // pending
 }
 
 function rejectOffer(){
+  setTableRowTakenBy(s1.currentIdx,`Agent ${s1.agentN++}`);
   s1.benefitsTotal+=C_A1;
   s1.currentIdx++;
   nextOffer();
@@ -525,47 +579,25 @@ function acceptOffer(){
   s1.acceptedIdx=s1.currentIdx;
   document.getElementById('btn-accept').disabled=true;
   document.getElementById('btn-reject').disabled=true;
-  buildReveal();
+  setTableRowTakenBy(s1.currentIdx,'▶ You');
+  autoPlayRemaining(s1.currentIdx+1);
 }
 
-function buildReveal(){
-  const P=N_ROUNDS; // periods = rounds for direct comparison
+function autoPlayRemaining(idx){
+  if(idx>=N_ROUNDS){onAllRowsDone();return;}
+  const offer=s1.allOffers[idx];
+  const el=document.getElementById('offer-number');
+  el.textContent='$'+offer.toFixed(1);
+  el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
+  document.getElementById('offer-week').textContent='Week '+(idx+1)+' of '+N_ROUNDS;
+  addTableRow(idx,`Agent ${s1.agentN++}`);
+  setTimeout(()=>autoPlayRemaining(idx+1),250);
+}
+
+function onAllRowsDone(){
+  applyTableHighlights();
+  const totals=s1.allOffers.map((w,i)=>i*C_A1+(N_ROUNDS-i)*w);
   const acceptIdx=s1.acceptedIdx;
-
-  // period income for row i: C_A1 for j<i, offer for j>=i
-  const totals=s1.allOffers.map((w,i)=>i*C_A1+(P-i)*w);
-  const bestTotal=Math.max(...totals);
-
-  // header
-  let html=`<tr><th class="row-label">Offer</th><th class="row-label">Taken by</th>`;
-  for(let p=1;p<=P;p++) html+=`<th>P${p}</th>`;
-  html+=`<th>Total</th></tr>`;
-
-  let agentN=1;
-  s1.allOffers.forEach((offer,i)=>{
-    const isUser=(i===acceptIdx);
-    const isBestTotal=(totals[i]===bestTotal);
-    const both=isUser&&isBestTotal;
-    const takenBy=isUser?'▶ You':`Agent ${agentN++}`;
-    const total=totals[i];
-
-    const rowBg=(isUser&&!both)?'background:rgba(212,168,67,0.07)':isBestTotal?'background:rgba(90,158,111,0.07)':'';
-    const youCellBg=both?'background:rgba(212,168,67,0.25);':'';
-
-    html+=`<tr style="${rowBg}">`;
-    html+=`<td class="row-label" style="color:var(--muted)">$${offer.toFixed(1)}</td>`;
-    html+=`<td class="row-label" style="${youCellBg}color:${isUser?'var(--gold)':'var(--muted)'}">${takenBy}</td>`;
-    for(let j=0;j<P;j++){
-      const employed=(j>=i);
-      const inc=employed?offer:C_A1;
-      html+=`<td style="color:${employed?'var(--blue)':'var(--muted)'}">$${inc.toFixed(0)}</td>`;
-    }
-    html+=`<td style="color:var(--ink);font-weight:500">$${total.toFixed(0)}</td></tr>`;
-  });
-
-  document.getElementById('offer-table').innerHTML=html;
-
-  // stats
   const userTotal=totals[acceptIdx];
   const userOffer=s1.allOffers[acceptIdx];
   const avgTotal=totals.reduce((a,b)=>a+b,0)/totals.length;
@@ -575,16 +607,14 @@ function buildReveal(){
     <div class="rstat neutral"><div class="rstat-val">$${userOffer.toFixed(1)}</div><div class="rstat-lbl">Your wage<br>Week ${acceptIdx+1}</div></div>
     <div class="rstat ${userTotal>=avgTotal?'good':'bad'}"><div class="rstat-val">$${Math.round(avgTotal).toLocaleString()}</div><div class="rstat-lbl">Avg total income<br>all agents</div></div>
     <div class="rstat ${pct>=50?'good':'bad'}"><div class="rstat-val">${pct}th</div><div class="rstat-lbl">Your percentile<br>total income</div></div>`;
-
   const res=solve(BETA_A1,C_A1,0.10);
   const wStar=res.wStar;
   const diff=userOffer-wStar;
   let prose=`The optimal reservation wage for these parameters is <strong>$${wStar.toFixed(1)}</strong>. `;
-  if(Math.abs(diff)<2) prose+=`You accepted $${userOffer.toFixed(1)} — essentially optimal. The model would have done almost the same thing.`;
-  else if(diff>0) prose+=`You accepted $${userOffer.toFixed(1)}, above the optimal threshold. Solid result — though you could have accepted a little earlier without much loss.`;
-  else prose+=`You accepted $${userOffer.toFixed(1)}, below the optimal threshold of $${wStar.toFixed(1)}. The model says you settled a bit early. A few more weeks of searching would have paid off in expectation.`;
+  if(Math.abs(diff)<2) prose+=`You accepted $${userOffer.toFixed(1)} — essentially optimal.`;
+  else if(diff>0) prose+=`You accepted $${userOffer.toFixed(1)}, above the optimal threshold. Solid result.`;
+  else prose+=`You accepted $${userOffer.toFixed(1)}, below the optimal threshold. The model says you settled a bit early.`;
   document.getElementById('reveal-narrative').innerHTML=prose;
-
   const rev=document.getElementById('timeline-reveal');
   rev.style.display='block';
   rev.scrollIntoView({behavior:'smooth',block:'start'});

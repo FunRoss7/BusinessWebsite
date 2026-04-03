@@ -147,7 +147,7 @@ p em { color: var(--gold); font-style: italic; }
 .choice-card-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
 
 .reject-card:not(:disabled):hover { border-color: var(--red); background: rgba(196,75,58,0.04); }
-.reject-card .choice-card-num { color: var(--muted); }
+.reject-card .choice-card-num { color: var(--ink); }
 
 .accept-card .choice-card-num { color: var(--gold); }
 .accept-card:not(:disabled):hover { border-color: var(--green); background: rgba(90,158,111,0.04); }
