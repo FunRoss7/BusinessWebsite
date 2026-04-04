@@ -737,8 +737,8 @@ const BELL=[
     prose:`We solve this by starting with a guess for d, applying the update T(d), and repeating until d stops changing. This always converges. Once we have d, v(w) follows from the formula above, and w* follows from the next step.`
   },
   {
-    eq:`w* where: &nbsp;<span class="tb">v(w*)</span> = <span class="tg">u(c) + β·d</span>`,
-    prose:`The <strong>reservation wage w*</strong> is where accepting and rejecting are exactly equal in value. Below w*, the search value is higher — keep waiting. Above w*, the job value is higher — accept. Every parameter we've discussed feeds into this single number.`
+    eq:`set equal and solve:<br><br><span class="tb">v(w*)</span> = <span class="tg">u(c) + β·d</span><br><br><span class="tm">↑ accept &nbsp;&nbsp;&nbsp; ↑ reject</span><br><br>→ &nbsp;<strong>w*</strong>`,
+    prose:`The <strong>reservation wage w*</strong> is the exact indifference point — the wage where accepting and staying unemployed are worth exactly the same. Set the two sides equal and solve. Below w*, keep searching. Above w*, accept. Every parameter we've discussed feeds into this single number.`
   }
 ];
 
@@ -749,11 +749,14 @@ function revealNextBell(){
   const div=document.createElement('div');
   div.className='bell-step';
   div.innerHTML=`
-    <div class="bell-step-header">
+    <div class="bell-left">
       <div class="bell-num">${String(bellStep+1).padStart(2,'0')}</div>
-      <div class="bell-eq">${BELL[bellStep].eq}</div>
+      <div class="bell-prose">${BELL[bellStep].prose}</div>
     </div>
-    <div class="bell-body"><div class="bell-prose">${BELL[bellStep].prose}</div></div>`;
+    <div class="bell-divider-col"></div>
+    <div class="bell-right">
+      <div class="bell-eq">${BELL[bellStep].eq}</div>
+    </div>`;
   wrap.appendChild(div);
   requestAnimationFrame(()=>requestAnimationFrame(()=>div.classList.add('show')));
   bellStep++;
@@ -772,7 +775,7 @@ function getCtx(id){
   const c=document.getElementById(id);
   const dpr=window.devicePixelRatio||1;
   const W=c.parentElement.clientWidth-36;
-  const H=parseInt(c.getAttribute('height'));
+  const H=Math.round(W/2);
   c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';
   const ctx=c.getContext('2d');ctx.scale(dpr,dpr);
   return{ctx,W,H};
@@ -816,7 +819,7 @@ function renderVF(res){
   ctx.clearRect(0,0,W,H);
   const{w,v,h,wStar,thr}=res;
   const xmn=0,xmx=100,all=[...v,...h];
-  const ymn=Math.min(...all)-0.2,ymx=Math.max(...all)+0.2;
+  const ymn=0,ymx=Math.max(...all)+0.2;
   const pt=px(thr,ymn,ymx,B,T);
   ctx.beginPath();ctx.strokeStyle='#302c26';ctx.lineWidth=1;
   ctx.setLineDash([3,5]);ctx.moveTo(L,pt);ctx.lineTo(R,pt);ctx.stroke();ctx.setLineDash([]);
