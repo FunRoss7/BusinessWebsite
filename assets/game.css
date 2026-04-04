@@ -56,11 +56,10 @@ body {
 .game-nav-links li a:hover { color: var(--gold); }
 
 .act {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 80px 24px;
+  padding: 8vh 24px;
   max-width: 760px;
   margin: 0 auto;
 }
@@ -231,9 +230,9 @@ tr:hover td { background: rgba(255,255,255,0.012); }
 .reveal-narrative strong { color: var(--ink); }
 
 /* ACT 2 CLICKER */
-.clicker-arena { text-align: center; padding: 16px 0; }
+.clicker-arena { text-align: center; padding: clamp(4px, 1vh, 8px) 0; }
 .click-btn {
-  width: 130px; height: 130px; border-radius: 50%;
+  width: clamp(70px, 10vh, 100px); height: clamp(70px, 10vh, 100px); border-radius: 50%;
   border: 2px solid var(--gold); background: transparent;
   cursor: pointer; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -245,10 +244,6 @@ tr:hover td { background: rgba(255,255,255,0.012); }
   font-family: 'JetBrains Mono', monospace;
   font-size: 22px; font-weight: 600; color: var(--ink); display: block;
 }
-.click-sub {
-  font-family: 'JetBrains Mono', monospace; font-size: 10px;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 2px;
-}
 .cps-meter { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .cps-bar-track { flex: 1; height: 5px; background: var(--rule); border-radius: 3px; overflow: hidden; }
 .cps-bar-fill {
@@ -259,14 +254,14 @@ tr:hover td { background: rgba(255,255,255,0.012); }
 .cps-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); min-width: 52px; text-align: right; }
 .exhaustion { font-size: 12px; color: var(--red); font-style: italic; min-height: 16px; opacity: 0; transition: opacity 0.3s; }
 .exhaustion.show { opacity: 1; }
-.needs-ladder { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.needs-ladder { display: flex; flex-direction: column; gap: clamp(2px, 0.4vh, 4px); margin: clamp(4px, 1vh, 8px) 0; }
 .need-row {
-  display: flex; align-items: center; gap: 14px;
-  padding: 10px 14px; border-radius: 6px; border: 1px solid var(--rule);
+  display: flex; align-items: center; gap: 12px;
+  padding: clamp(3px, 0.7vh, 6px) 12px; border-radius: 6px; border: 1px solid var(--rule);
   opacity: 0.3; transform: translateX(-6px); transition: all 0.35s ease;
 }
 .need-row.unlocked { opacity: 1; transform: translateX(0); border-color: var(--green); background: rgba(90,158,111,0.06); }
-.need-icon { font-size: 24px; filter: grayscale(1); transition: filter 0.35s; width: 32px; text-align: center; flex-shrink: 0; }
+.need-icon { font-size: clamp(13px, 2vh, 18px); filter: grayscale(1); transition: filter 0.35s; width: 24px; text-align: center; flex-shrink: 0; }
 .need-row.unlocked .need-icon { filter: grayscale(0); }
 .need-body { flex: 1; }
 .need-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 1px; }

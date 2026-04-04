@@ -55,12 +55,14 @@
     <div class="reveal-narrative" id="tut-narrative" style="display:none;margin-top:16px"></div>
   </div>
 
-  <div style="text-align:right;margin-top:8px">
-    <button onclick="startRealGame()" style="background:none;border:none;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;padding:4px 0">skip tutorial →</button>
+  <!-- Bridge -->
+  <div style="padding:40px 0 24px;border-top:1px solid var(--rule);margin-top:32px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Your turn</div>
+    <p style="font-size:15px;color:var(--ink);line-height:1.6;margin:0">Now that you understand the mechanics, practice it for real. Twenty offers. One chance at each.</p>
   </div>
 
   <!-- Real game card -->
-  <div class="card" id="search-card" style="display:none">
+  <div class="card" id="search-card">
     <div class="offer-week" id="offer-week" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Week 1</div>
     <div class="choice-cards">
       <button class="choice-card reject-card" id="btn-reject" onclick="rejectOffer()">
@@ -118,12 +120,11 @@
     <div class="clicker-arena">
       <div class="cps-meter">
         <div class="cps-bar-track"><div class="cps-bar-fill" id="cps-bar" style="width:0%"></div></div>
-        <div class="cps-val"><span id="cps-display">0.0</span> /s</div>
+        <div class="cps-val">clicks / sec</div>
       </div>
       <div class="exhaustion" id="exhaustion">You've hit the ceiling. No amount of effort gets you higher — you'd need something working for you while you sleep.</div>
       <button class="click-btn" id="click-btn" onclick="handleClick()">
         <span class="click-cps-big" id="click-cps-big">0.0</span>
-        <span class="click-sub">clicks / sec</span>
       </button>
     </div>
     <div class="needs-ladder">
@@ -468,7 +469,7 @@ function showTutPhase(i){
         <div class="tleg"><div class="tleg-sw" style="background:#5a8090"></div>Employed income</div>
         <div class="tleg"><div class="tleg-sw" style="background:#7a7060"></div>Unemployment benefit</div>
       </div>`;
-    narr.innerHTML=step.narrative+tableHTML+`<br><br><button class="eq-next-btn" onclick="startRealGame()">Start the real game →</button>`;
+    narr.innerHTML=step.narrative+tableHTML+`<br><br><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--muted)">↓ Scroll down to play</span>`;
     narr.style.display='block';
   }
 }
@@ -488,8 +489,6 @@ function tutAccept(){
 }
 function advanceTut(){tutPhase++;showTutPhase(tutPhase);}
 function startRealGame(){
-  document.getElementById('tutorial-card').style.display='none';
-  document.getElementById('search-card').style.display='block';
   document.getElementById('reject-num').textContent=`$${C_A1}`;
   initRealGame();
 }
@@ -641,6 +640,8 @@ function resetGame(){
 }
 
 showTutPhase(0);
+document.getElementById('reject-num').textContent=`$${C_A1}`;
+initRealGame();
 
 // ═══════════════════════════════════════
 // ACT 2 CLICKER
@@ -657,7 +658,6 @@ function refreshCPS(){
   const now=Date.now();
   clickTimes=clickTimes.filter(t=>now-t<=1000);
   const cps=clickTimes.length;
-  document.getElementById('cps-display').textContent=cps.toFixed(1);
   document.getElementById('click-cps-big').textContent=cps.toFixed(1);
   document.getElementById('cps-bar').style.width=Math.min(cps/14*100,100)+'%';
   NTH.forEach((th,i)=>document.getElementById('need-'+i).classList.toggle('unlocked',cps>=th));
