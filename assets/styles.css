@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Mono:ital,wght@0,400;0,500&family=DM+Sans:wght@300;400;500&display=swap');
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; min-width: 0; }
+
+html, body { overflow-x: hidden; }
 
 :root {
   --bg:      #18120a;
@@ -39,7 +41,7 @@ nav {
   display: grid;
   grid-template-columns: 3fr 2fr;
   gap: 3rem;
-  align-items: end;
+  align-items: start;
 }
 
 .hero-eyebrow {
@@ -69,6 +71,14 @@ nav {
 }
 
 .hero-aside { padding-bottom: 6px; }
+
+.hero-photo {
+  width: 100%;
+  display: block;
+  margin-bottom: 1.2rem;
+  border: 1px solid var(--gold-d);
+  filter: grayscale(20%);
+}
 
 .aside-note {
   border-left: 2px solid var(--carpet2);
@@ -104,11 +114,11 @@ nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-top: 1px solid var(--grain);
-  border-bottom: 1px solid var(--grain);
 }
 
-.sections-grid > * { border-right: 1px solid var(--grain); }
+.sections-grid > * { border-right: 1px solid var(--grain); border-bottom: 1px solid var(--grain); }
 .sections-grid > *:last-child { border-right: none; }
+.section-card--blank { min-height: 160px; }
 
 .section-card-link { display: block; text-decoration: none; color: inherit; transition: background 0.18s, border-color 0.18s; }
 .section-card-link:hover { background: rgba(255,255,255,0.04); }
@@ -201,3 +211,29 @@ footer {
 .footer-links li { display: flex; }
 .footer-links a { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream3); text-decoration: none; display: flex; align-items: center; padding: 1.1rem 1.4rem; border-left: 1px solid var(--gold-d); transition: color 0.15s, background 0.15s; }
 .footer-links a:hover { color: var(--gold-lt); background: rgba(184,144,64,0.07); }
+
+@media (orientation: portrait), (max-width: 640px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 2.4rem 1.4rem 2rem;
+  }
+  .hero-name { font-size: 36px; }
+  .hero-photo { max-width: 320px; margin: 0 auto; }
+
+  .sections-grid { grid-template-columns: 1fr; }
+  .sections-grid > * { border-right: none; }
+  .sections-grid > *:last-child { border-bottom: none; }
+  .section-card--blank { display: none; }
+
+  .who-strip {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    padding: 2rem 1.4rem;
+  }
+
+  .divider { padding: 1.4rem 1.4rem 0.8rem; }
+
+  nav { padding-left: 0; }
+  .nav-logo { padding: 0 1.2rem; font-size: 20px; }
+  .nav-links a { padding: 0 1rem; }
+}
