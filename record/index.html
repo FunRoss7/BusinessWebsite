@@ -30,7 +30,7 @@
       </div>
       <div class="hero-tagline">Built to be understood</div>
       <div class="hero-bio">
-        This isn't a résumé. It's an account of the systems I've worked on, the constraints they lived under, and the decisions that made them hold or fail. Most of it happened in places where reliability mattered more than elegance, and where "good enough" had to actually be good enough.
+        This is my résumé, with some extras. The systems I've worked on, the constraints they lived under, and the decisions that made them hold or fail. Most of it happened in places where reliability mattered more than elegance, and where "good enough" had to actually be good enough.
       </div>
     </div>
     <div class="hero-aside">
@@ -40,11 +40,11 @@
       </div>
       <div class="aside-note">
         <div class="aside-label">On the desk right now</div>
-        <div class="aside-val">Wind-driven propulsion. A Pepsi bottle is load-bearing. Don't ask yet.</div>
+        <div class="aside-val">Wind-driven propulsion. A soda bottle is load-bearing. Don't ask yet.</div>
       </div>
       <div class="aside-note">
         <div class="aside-label">On the office</div>
-        <div class="aside-val">Red carpet. Gold frames. Sailboats and old engineers. One thing always slightly askew.</div>
+        <div class="aside-val">Red carpet. Gold frames. Sailboats and Ritchie &amp; Thompson at the PDP-11. One thing always slightly askew.</div>
       </div>
     </div>
   </div>
@@ -66,57 +66,110 @@
     </div>
     <div class="who-right">
       <p>I build systems that have to behave. Most of my work sits in the layer between hardware, simulation, and operations — where assumptions get tested quickly and failure is expensive.</p>
-      <p>I'm drawn to problems where the system matters more than the code itself: timing, interfaces, failure modes, and how everything holds together when something inevitably goes wrong.</p>
+      <p>A significant part of that has been simulation: environments built to test flight software against real-world conditions. The goal was never visual fidelity — it was behavioral accuracy. If the simulation lied, the system failed later.</p>
+      <p>Another part has been distributed infrastructure: networks where uptime and recoverability matter more than theoretical efficiency. Failures always happen, and they rarely happen cleanly. The job is making sure problems surface quickly and the system recovers.</p>
+      <p>And underneath both: internal tools that never get seen directly, but change how quickly a team can learn and iterate. That work is invisible until it isn't.</p>
       <p>I don't chase perfect designs. I try to find designs that survive contact with reality.</p>
     </div>
   </div>
 
   <div class="divider">
-    <span class="divider-label">Selected Work</span>
+    <span class="divider-label">Experience</span>
     <div class="divider-rule"></div>
   </div>
 
-  <div class="sections-grid">
-
-    <div class="section-card">
-      <div class="sc-number">01</div>
-      <div class="sc-frame">
-        <div class="sc-title">Flight &amp; Simulation <em>Systems</em></div>
-      </div>
-      <div class="sc-desc">
-        Built and maintained simulation environments used to test flight software against real-world conditions. The goal wasn't visual fidelity — it was behavioral accuracy. If the simulation lied, the system failed later.
-      </div>
-      <div class="sc-desc">
-        Worked across physics models, hardware interfaces, and real-time constraints to make sure what we saw in simulation matched what the vehicle would actually do.
+  <div class="who-strip">
+    <div class="who-left">
+      <div class="who-heading">Collins <em>Aerospace</em></div>
+      <div class="who-meta">
+        Senior Software Engineer<br>
+        October 2021 – Present
       </div>
     </div>
+    <div class="who-right">
+      <p>Developed and maintained 99.99% uptime software for a VHF datalink ground station network spanning 1,100+ sites, enabling continuous, fault-tolerant aircraft communications across globally distributed infrastructure.</p>
+      <ul>
+        <li>Designed and deployed automated OS upgrade processes compliant with NIST SP 800-53, including custom initramfs for disk repartitioning and bootloader updates on field systems — achieving &lt;5 minutes downtime per site with zero upgrade failures.</li>
+        <li>Implemented error-recovery mechanisms for Aircraft Traffic Networks, reducing the operational impact of network failover events by over 90%.</li>
+        <li>Collaborated with external industry partners (including competitors) to implement network crosslinks, improving inter-network reliability by approximately 50%.</li>
+        <li>Designed and deployed automated monitoring and alerting systems to detect service outages within 5 minutes, notify customers of impact, and provide engineers with actionable diagnostic data.</li>
+        <li>Led cross-functional teams through a 1.5-year program to automate software distribution across the network, incorporating customer advisory constraints, traffic prioritization, and controlled rollout strategies.</li>
+        <li>Modernized lab infrastructure by organizing workflows, automating environment setup, and developing virtual lab systems to improve development efficiency and testing consistency.</li>
+      </ul>
+    </div>
+  </div>
 
-    <div class="section-card">
-      <div class="sc-number">02</div>
-      <div class="sc-frame">
-        <div class="sc-title">Distributed <em>Systems</em></div>
-      </div>
-      <div class="sc-desc">
-        Designed and supported systems operating across large, distributed networks where uptime and recoverability mattered more than theoretical efficiency.
-      </div>
-      <div class="sc-desc">
-        Focused on failure handling, system visibility, and making sure problems surfaced quickly and clearly — because they always happen, and they rarely happen cleanly.
+  <div class="who-strip">
+    <div class="who-left">
+      <div class="who-heading">Lockheed Martin <em>Space</em></div>
+      <div class="who-meta">
+        Senior Software Engineer<br>
+        November 2017 – May 2021
       </div>
     </div>
+    <div class="who-right">
+      <p>Developed high-fidelity simulation environments for spacecraft systems, enabling flight software validation across both emulated and hardware-in-the-loop configurations.</p>
+      <ul>
+        <li>Implemented physics-based models (thermal, orbital mechanics, and reaction devices) to exercise flight control loops, collaborating with systems engineers to ensure alignment with high-fidelity mission simulations.</li>
+        <li>Enhanced simulation capabilities to support fault injection, dynamic model swapping at runtime, digital twin architectures, and multiple real-time clock hardware configurations.</li>
+        <li>Integrated heterogeneous legacy models (Ada, Fortran, Simulink) into a unified C++ simulation framework, enabling consistent configuration and execution across diverse subsystems.</li>
+        <li>Developed automated Python bindings for C++ simulation models, significantly improving test configuration speed and flexibility.</li>
+        <li>Diagnosed and resolved issues in classified lab environments, then automated workflows to increase test throughput from 1 to 4 full system tests per day.</li>
+        <li>Debugged and improved emulators for Honeywell OBC (PPC 603e) and RAD750 processors, enabling flight software teams to test binaries without access to limited flight hardware.</li>
+        <li>Served as primary owner of FTA lab simulation products for NextGen SBIRS, maintaining infrastructure and ensuring system availability for development and testing.</li>
+      </ul>
+    </div>
+  </div>
 
-    <div class="section-card">
-      <div class="sc-number">03</div>
-      <div class="sc-frame">
-        <div class="sc-title">Tools &amp; <em>Infrastructure</em></div>
-      </div>
-      <div class="sc-desc">
-        Built internal tools to reduce friction in development and testing — automation, diagnostics, and systems that let engineers move faster without breaking things.
-      </div>
-      <div class="sc-desc">
-        A lot of this work never gets seen directly, but it changes how quickly a team can learn and iterate.
+  <div class="who-strip">
+    <div class="who-left">
+      <div class="who-heading">Purdue <em>University</em></div>
+      <div class="who-meta">
+        Research Assistant<br>
+        August 2016 – October 2017
       </div>
     </div>
+    <div class="who-right">
+      <p>Designed and built a novel pressure/attitude sensor for atmospheric entry vehicles based on Newtonian flow principles, enabling attitude estimation in hypersonic regimes.</p>
+      <ul>
+        <li>Developed ~2,000 lines of MATLAB code to calibrate a piezoelectric sensor using shock tube data, supporting high-speed pressure measurements for hypersonic wind tunnel research conducted in collaboration with the Air Force Research Laboratory.</li>
+        <li>Led development of flight software components for CubeSat sensor systems, including sensor drivers used for calibration and integration with the flight software team.</li>
+        <li>Designed and built vacuum chamber and microcontroller-based test systems to validate sensors and prototype propulsion components under simulated flight conditions.</li>
+        <li>Collaborated across three engineering departments (Aerospace, Mechanical, and Polytechnic) to secure manufacturing resources and enable rapid prototyping under tight research deadlines.</li>
+        <li>Optimized Raspberry Pi-based data acquisition systems for vacuum operation, enabling stable sensor data collection in constrained thermal environments.</li>
+        <li>Developed Simulink control algorithms with C++ integration to operate prototype thrusters, enabling closed-loop control testing on embedded hardware.</li>
+      </ul>
+    </div>
+  </div>
 
+  <div class="divider">
+    <span class="divider-label">Education</span>
+    <div class="divider-rule"></div>
+  </div>
+
+  <div class="who-strip">
+    <div class="who-left">
+      <div class="who-heading">Purdue <em>University</em></div>
+    </div>
+    <div class="who-right">
+      <p><strong>M.S. Economics</strong> — May 2026</p>
+      <p><strong>B.S. Aeronautical and Astronautical Engineering</strong> — May 2017</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <span class="divider-label">Publication</span>
+    <div class="divider-rule"></div>
+  </div>
+
+  <div class="who-strip">
+    <div class="who-left">
+      <div class="who-heading">AIAA/USU <em>SmallSat</em></div>
+      <div class="who-meta">2017</div>
+    </div>
+    <div class="who-right">
+      <p>M. Goggin, S. Tamrazian, R. Carlson, A. Tidwell, and D. Parkos. "CubeSat Sensor Platform for Reentry Aerothermodynamics." <em>Proceedings of the 31st Annual AIAA/USU Conference on Small Satellites</em>, 2017.</p>
+    </div>
   </div>
 
   <div class="divider">
@@ -132,6 +185,7 @@
       <p>I tend to start from constraints instead of abstractions. What has to be true? What fails first? What do we actually control?</p>
       <p>I'm comfortable moving between levels — from implementation details up to system behavior — because most problems show up at the boundaries between them.</p>
       <p>And when something works, I don't leave it alone. I want to know why it works, and what would make it stop.</p>
+      <p>If you want to talk: ross.business.carlson@gmail.com</p>
     </div>
   </div>
 
@@ -140,7 +194,7 @@
     <ul class="footer-links">
       <li><a href="https://github.com/FunRoss7/">GitHub</a></li>
       <li><a href="https://www.linkedin.com/in/ross-carlson-bsaae/">LinkedIn</a></li>
-      <li><a href="#">RSS</a></li>
+      <li><a href="mailto:ross.business.carlson@gmail.com">Email</a></li>
     </ul>
   </footer>
 
