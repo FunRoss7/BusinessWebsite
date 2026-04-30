@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turbine Boat — Ross Carlson</title>
+<link rel="icon" href="../favicon.png">
+<link rel="stylesheet" href="../assets/game.css">
+<style>
+.build-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px; margin: 24px 0;
+}
+.build-card.wide { grid-column: 1 / -1; }
+.build-videos { display: grid; grid-template-columns: 1fr 1fr; }
+@media (max-width: 560px) { .build-videos { grid-template-columns: 1fr; } }
+.build-card {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden;
+}
+.build-card-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--rule); }
+.build-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
+}
+.build-title { font-family: 'Lora', serif; font-size: 15px; font-weight: 600; color: var(--ink); }
+.build-status {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.1em; color: var(--green); margin-top: 4px;
+}
+.build-status.failed { color: var(--red); }
+.build-media {
+  position: relative; background: #0c0b09;
+}
+.build-media.portrait   { aspect-ratio: 9 / 16; }
+.build-media.landscape  { aspect-ratio: 16 / 9; }
+.build-media iframe {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
+}
+.photo-stub {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; border: 1px dashed #2e2a24;
+}
+.photo-stub-icon { font-size: 24px; opacity: 0.25; }
+.photo-stub-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+}
+.build-desc { padding: 14px 16px; font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+.flow-diagram {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 8px;
+  padding: 22px 24px; margin: 20px 0;
+}
+.flow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.flow-box {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 7px 12px; border: 1px solid var(--rule);
+  border-radius: 4px; color: var(--ink); white-space: nowrap;
+}
+.flow-arrow { font-size: 13px; color: var(--muted); padding: 0 2px; }
+.flow-arrow.fwd { color: var(--green); }
+.flow-arrow.back { color: var(--red); }
+.flow-note { font-size: 11px; color: var(--muted); padding: 0 6px; }
+
+.outputs-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.stat-card.gold { border-top-color: var(--gold); }
+.stat-card.gold .stat-val { color: var(--gold); }
+
+@media (max-width: 560px) {
+  .outputs-3 { grid-template-columns: 1fr; }
+  .build-grid { grid-template-columns: 1fr; }
+  .flow-row { gap: 3px; }
+  .flow-box { font-size: 9px; padding: 5px 8px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="game-nav">
+  <a class="game-nav-home" href="../index.html">Ross Carlson</a>
+  <ul class="game-nav-links">
+    <li><a href="../lab/index.html">Lab</a></li>
+    <li><a href="../gallery/index.html">Gallery</a></li>
+    <li><a href="../record/index.html">Record</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="act-label">Turbine Boat · Upwind Propulsion</div>
+  <h1>This boat sails directly <em>into the wind.</em></h1>
+  <p>Not tacking. Not at an angle — straight into it, powered by the same wind it's fighting.</p>
+  <p>A turbine on deck captures wind energy and converts it to shaft power. That power drives an underwater propeller. Done right, the propulsive force exceeds the turbine's own drag, and the boat makes headway directly upwind.</p>
+  <p>This is a working experiment, not a thought experiment.</p>
+  <div class="scroll-hint">scroll to see how</div>
+</div>
+
+<!-- ACT I — THE CONCEPT -->
+<div class="act" id="act1">
+  <div class="act-label">Act I · The concept</div>
+  <h2>The turbine is the engine.<br>The wind is the <em>fuel.</em></h2>
+
+  <p>When a boat moves directly into the wind, it meets the wind head-on. The faster it goes, the harder the wind hits — the <strong>apparent wind</strong> compounds with boat speed. Most boats fight this. This one uses it.</p>
+
+  <p>A turbine on top of the boat faces into the apparent wind. As the boat moves forward, apparent wind increases, the turbine spins harder, more shaft power flows to an underwater propeller. There is positive feedback built into the physics.</p>
+
+  <div class="flow-diagram">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px">Power path</div>
+    <div class="flow-row">
+      <div class="flow-box" style="border-color:var(--blue);color:var(--blue)">Apparent wind</div>
+      <div class="flow-arrow fwd">──→</div>
+      <div class="flow-box">Turbine</div>
+      <div class="flow-arrow fwd">──→</div>
+      <div class="flow-box">Shaft</div>
+      <div class="flow-arrow fwd">──→</div>
+      <div class="flow-box">Propeller</div>
+      <div class="flow-arrow fwd">──→</div>
+      <div class="flow-box" style="border-color:var(--green);color:var(--green)">Thrust forward</div>
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--rule)">
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--red);color:var(--red)">Antithrust</div>
+        <div class="flow-arrow back">←──</div>
+        <div class="flow-note">The turbine pushes backward as it extracts energy. The boat must overcome this before moving at all.</div>
+      </div>
+      <div class="flow-row" style="margin-top:8px">
+        <div class="flow-box" style="border-color:#4a4540;color:#7a7060">Hull drag</div>
+        <div class="flow-arrow back" style="color:#4a4540">←──</div>
+        <div class="flow-note">Water resistance, growing with the square of speed.</div>
+      </div>
+    </div>
+  </div>
+
+  <p>The catch: extracting energy from the wind creates a backward force — <strong>antithrust.</strong> The turbine is also a brake. The boat only moves forward if the propeller's thrust exceeds antithrust plus hull drag.</p>
+
+  <p>That single condition — <strong>thrust > antithrust + hull drag</strong> — is the entire design problem. Every parameter in the model below feeds into it.</p>
+
+  <p>The model underneath comes from <strong>actuator disk theory</strong>: the same framework used to analyze helicopter rotors and wind farm turbines, applied here to a two-stage machine where the turbine and propeller share a shaft. The equilibrium boat speed is where the forces balance exactly.</p>
+</div>
+
+<!-- ACT II — THE BUILDS -->
+<div class="act" id="act2">
+  <div class="act-label">Act II · The builds</div>
+  <h2>Three iterations.<br>One approach that <em>worked.</em></h2>
+
+  <p>The first question in any experimental concept is whether the physics holds up outside a spreadsheet. That was the only goal of the first build.</p>
+
+  <div class="build-grid">
+
+    <div class="build-card">
+      <div class="build-card-header">
+        <div class="build-num">Build 01</div>
+        <div class="build-title">Proof of concept</div>
+        <div class="build-status">✓ worked</div>
+      </div>
+      <div class="build-media portrait">
+        <img src="turbine_boat_assets/model1.jpg" alt="Proof of concept assembly — turbine and propeller on a Dr Pepper bottle shaft" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">
+      </div>
+      <div class="build-desc">Built from scrap metal and a neighbor's old RC aircraft with drone propellers. It works on the water — but not well. The turbine spun fast and the boat went almost nowhere. The propeller wasn't tuned for the turbine, which is exactly what led to the matching model in Act III.</div>
+    </div>
+
+    <div class="build-card">
+      <div class="build-card-header">
+        <div class="build-num">Build 02</div>
+        <div class="build-title">Dinghy scale-up</div>
+        <div class="build-status failed">✗ failed</div>
+      </div>
+      <div class="build-media landscape">
+        <img src="turbine_boat_assets/ruci turbine.jpg" alt="10-foot dinghy with wind turbine mounted on mast, on the water" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">
+      </div>
+      <div class="build-desc">The dinghy already had an electric motor well-matched to the hull. The plan was simple: add a turbine to power the motor and let each spin at whatever speed it needed. No mechanical coupling, no gearbox — just electricity in between.</div>
+      <div class="build-desc">Two things ended it. The first was safety. The turbine sat directly overhead — sharp fiberglass blades whirring a foot above your head, with nothing between you and them except the electric speed controller. You had to just trust the brakes.</div>
+      <div class="build-desc">The second was losses. Mechanical to AC to DC to switching AC back to mechanical was too many conversions. Then a phase in the wiring opened up and the whole system malfunctioned. That was the end of it.</div>
+      <div class="build-desc">It did show something interesting. All that heavy metal mounted high up made the boat unstable in a way a sailboat isn't. Hit a gust on the beam and the boat would slowly start to tip — then accelerate quickly once the turbine spun up and the antithrust actually killed the apparent wind. Juggling the motor controls while the boat was heeling was not fun.</div>
+      <div class="build-desc">The lesson: do the math first. Match the propeller. Scale up the bottle design that already worked.</div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- ACT III — PROPELLER MATCHING -->
+<div class="act" id="act3" style="padding-bottom:120px">
+  <div class="act-label">Act III · Propeller geometry</div>
+  <h2>The right propeller<br>for the <em>job.</em></h2>
+
+  <p>Once the turbine is sized and the shaft speed is known, there is still a second matching problem: which propeller actually converts that shaft power into thrust efficiently?</p>
+
+  <p>Marine propeller performance is catalogued in the <strong>Wageningen B-series</strong> — a family of charts plotting thrust and torque coefficients against the <strong>advance coefficient J</strong>, with a separate curve for each pitch-to-diameter ratio P/D.</p>
+
+  <div class="chart-wrap" style="padding:0;overflow:hidden">
+    <img src="turbine_boat_assets/pitch_diameter_advance_ratio.png"
+      alt="Wageningen B-series propeller chart — Kt and Kq vs advance coefficient J for P/D 0.50 to 1.40"
+      style="width:100%;display:block;filter:brightness(0.92) contrast(1.05)">
+  </div>
+
+  <p>The <strong>advance coefficient J = V / (n·D)</strong> measures how far the boat travels per propeller revolution, normalized by diameter. Each curve on the chart represents a different P/D ratio. The humped lines overlaid on both are efficiency curves — each peaks somewhere in the middle of its J range, then falls off on either side.</p>
+
+  <p>Two observations from the chart drive the model:</p>
+
+  <div class="card" style="margin:20px 0">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div style="font-family:'Lora',serif;font-size:28px;font-weight:600;color:var(--gold);flex-shrink:0;line-height:1;padding-top:2px">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px">Peak efficiency is roughly constant across P/D ratios</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">The tops of the efficiency humps all land near the same height — approximately <strong style="color:var(--ink)">0.85</strong> for a well-matched two-blade propeller. This lets the model treat propeller efficiency as a fixed parameter rather than a function of geometry.</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--rule)"></div>
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div style="font-family:'Lora',serif;font-size:28px;font-weight:600;color:var(--gold);flex-shrink:0;line-height:1;padding-top:2px">2</div>
+        <div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px">Each peak occurs at J ≈ P/D − 0.1</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">The efficiency peak for the P/D = 0.5 curve lands near J = 0.4. For P/D = 1.0, near J = 0.9. The offset is consistent at about 0.1 across the family. That offset is the slip — <strong style="color:var(--ink)">s = 0.1</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>Rearranging the second observation: a propeller runs at peak efficiency when <strong>P/D = J + s</strong>. This is the matching condition. Given the advance ratio set by your operating conditions, it tells you exactly which propeller to use.</p>
+
+  <div class="flow-diagram" style="padding:16px 24px;text-align:center">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--ink);letter-spacing:0.04em">
+      P/D &nbsp;=&nbsp; <span style="color:var(--blue)">J</span> &nbsp;+&nbsp; <span style="color:var(--gold)">s</span>
+    </div>
+    <div style="display:flex;justify-content:center;gap:32px;margin-top:10px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;flex-wrap:wrap">
+      <span><span style="color:var(--blue)">J</span> = V / (n·D) &nbsp;·&nbsp; advance ratio</span>
+      <span><span style="color:var(--gold)">s</span> = 0.10 &nbsp;·&nbsp; slip at peak efficiency</span>
+    </div>
+  </div>
+
+  <p>In the model, the turbine's tip-speed ratio sets shaft speed: <strong>n = λ·V_app / (π·D_turbine)</strong>. That shaft speed, combined with the boat speed and a propeller diameter solved numerically from the power budget, determines J. The required P/D follows directly — telling you the geometry of the propeller that extracts the available power most efficiently.</p>
+
+  <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--rule);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:2">
+    Source: Wageningen B-series, 2 blades, Re/A₀ = 0.300, P/D 0.50–1.40<br>
+    Slip s = 0.10 derived from observed J offset at peak efficiency · η = 0.85 assumed constant<br>
+    Propeller diameter solved from actuator disk power balance (Brent's method)
+  </div>
+</div>
+
+<!-- BUILD 03 VIDEOS -->
+<div class="act" style="padding-top:0;padding-bottom:120px">
+  <div class="act-label">Build 03 · In action</div>
+  <p>Back to the bottle design with the propeller properly matched to the turbine. Two runs, two trim angles — and the difference matters more than you'd expect.</p>
+  <p>The first video shows the boat trimmed high. The turbine gets up into faster air and spins hard. The propeller is nearly stalled at that angle, but the boat still makes way upwind. The second shows it trimmed low — the turbine is deep in the boundary layer where the wind barely reaches, and it can hardly turn at all.</p>
+  <div style="margin-top:16px;display:flex;flex-direction:column;gap:0">
+    <div>
+      <div style="padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);background:var(--paper);border:1px solid var(--rule);border-bottom:none">High angle trim</div>
+      <div class="build-media portrait">
+        <video src="turbine_boat_assets/v1.mp4" controls playsinline
+          style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover"></video>
+      </div>
+    </div>
+    <div style="margin-top:1px">
+      <div style="padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);background:var(--paper);border:1px solid var(--rule);border-bottom:none">Low angle trim</div>
+      <div class="build-media portrait">
+        <video src="turbine_boat_assets/v2.mp4" controls playsinline
+          style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover"></video>
+      </div>
+    </div>
+  </div>
+  <p style="margin-top:24px">The difference is the boundary layer. Wind speed near the water surface follows a logarithmic profile — it drops sharply as you approach the surface, where viscosity and waves slow it down. Even a meter of extra height is worth over a knot of apparent wind.</p>
+  <div class="chart-wrap" style="padding:0;overflow:hidden;margin-top:12px">
+    <img src="turbine_boat_assets/boundary_layer.png"
+      alt="Atmospheric boundary layer wind profile over water — wind speed vs height, showing low and high trim operating points"
+      style="width:100%;display:block">
+  </div>
+  <p>This is why the 20-foot axle on Build 4 matters. It keeps the turbine well above the cockpit, the 630 mm blades away from people, and cuts out all the conversion losses that killed Build 02. But just as importantly, it puts the turbine high enough in the boundary layer to actually see the wind — which is where the real power gains are.</p>
+</div>
+</body>
+</html>
